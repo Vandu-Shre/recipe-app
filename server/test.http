@@ -2,6 +2,8 @@
 @token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODc0MTBkZWQ2NzI3NDZiMWIxMTkzOCIsImlhdCI6MTc1MzcxODQ1OCwiZXhwIjoxNzUzNzIyMDU4fQ.d9StNQ8PSuJSp_NC1C4mnIKr2CI5-MPvOp5V28WSaAU
 @token1=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdhNTVkN2MyOWM0MzkyODA3YmRjOCIsImlhdCI6MTc1MzcyMDE1OCwiZXhwIjoxNzUzNzIzNzU4fQ.BX587pnZ0VAed2m8uQUvKTVpb7bOeAUK3orqs4ft188
 
+// Vandana | vandana@example.com | vanduisagenius
+
 ### Authentication & User Management ###
 ### Register a New User
 POST {{hostname}}/api/auth/register
