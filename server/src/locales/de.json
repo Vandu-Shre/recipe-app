@@ -50,5 +50,6 @@
 	"server_error_rating_deletion": "Serverfehler beim Löschen der Bewertung.",
 	"login_successful": "login_successful",
 	"profile_fetched_successfully": "profile_fetched_successfully",
-	"user_registered_successfully": "user_registered_successfully"
+	"user_registered_successfully": "user_registered_successfully",
+	"invalid_credentials": "invalid_credentials"
 }
