@@ -1,0 +1,18 @@
+// server/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "lib": ["es2020"],
+    "outDir": "./dist",
+    "rootDir": "./src", // This is important: tells TS where your source files are
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true, // <--- THIS IS CRUCIAL FOR IMPORTING JSON
+    "sourceMap": true // Good for debugging
+  },
+  "include": ["src/**/*.ts", "src/**/*.json"], // <--- THIS IS CRUCIAL: include all TS and JSON files from src
+  "exclude": ["node_modules"]
+}

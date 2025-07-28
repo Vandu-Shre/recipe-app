@@ -1,0 +1,7 @@
+{
+	"mongo_uri_not_defined": "MongoDB Verbindungszeichenfolge ist in der .env-Datei nicht definiert!",
+	"mongodb_connected": "MongoDB erfolgreich verbunden!",
+	"mongodb_connection_error": "MongoDB Verbindungsfehler:",
+	"server_running": "server_running",
+	"welcome_message": "welcome_message_de"
+}

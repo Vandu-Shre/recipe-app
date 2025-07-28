@@ -1,0 +1,7 @@
+{
+	"mongo_uri_not_defined": "MongoDB connection string is not defined in .env file!",
+	"mongodb_connected": "MongoDB connected successfully!",
+	"mongodb_connection_error": "MongoDB connection error:",
+	"server_running": "server_running",
+	"welcome_message": "welcome_message_en"
+}
