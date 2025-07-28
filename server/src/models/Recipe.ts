@@ -1,8 +1,10 @@
 // server/src/models/Recipe.ts
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, model, Document, Types, PopulatedDoc } from 'mongoose';
+import { IUser } from './User';
 
 // Define the interface for a Recipe document
 export interface IRecipe extends Document {
+  //user: Types.ObjectId | PopulatedDoc<IUser>;
   name: string;
   description: string;
   ingredients: string[]; // Array of strings, e.g., ["1 cup flour", "2 eggs"]
@@ -10,7 +12,7 @@ export interface IRecipe extends Document {
   cookingTime: number; // In minutes
   servings: number;
   image: string; // URL to an image (optional)
-  owner: Types.ObjectId; // Reference to the User who created the recipe
+  owner: Types.ObjectId | PopulatedDoc<IUser>; // Reference to the User who created the recipe
   averageRating: number; // Will store the calculated average rating
   ratingCount: number; // Number of ratings received
   createdAt: Date;

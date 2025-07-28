@@ -1,9 +1,10 @@
 // server/src/models/User.ts
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model, Document, Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 // Define the interface for a User document
 export interface IUser extends Document {
+  _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;
@@ -51,6 +52,7 @@ UserSchema.pre<IUser>('save', async function(next) {
   }
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
+  this.updatedAt = new Date();
   next();
 });
 
@@ -58,12 +60,6 @@ UserSchema.pre<IUser>('save', async function(next) {
 UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return await bcrypt.compare(candidatePassword, this.password);
 };
-
-// Update `updatedAt` field on save
-UserSchema.pre<IUser>('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
 
 const User = model<IUser>('User', UserSchema);
 

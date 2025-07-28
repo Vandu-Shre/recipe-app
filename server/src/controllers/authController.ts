@@ -27,13 +27,15 @@ export const registerUser = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    return res.status(400).json({ message: 'Please enter all fields' });
+    // Replaced hardcoded string with translation key
+    return res.status(400).json({ message: res.__('please_include_all_auth_fields') });
   }
 
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User with that email already exists' });
+      // Replaced hardcoded string with translation key
+      return res.status(400).json({ message: res.__('user_already_exists_email') });
     }
 
     const user = await User.create({ username, email, password });
@@ -41,7 +43,8 @@ export const registerUser = async (req: Request, res: Response) => {
     const token = createToken(user._id as Types.ObjectId);
 
     res.status(201).json({
-      message: 'User registered successfully',
+      // Replaced hardcoded string with translation key
+      message: res.__('user_registered_successfully'),
       user: {
         _id: user._id,
         username: user.username,
@@ -52,15 +55,18 @@ export const registerUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map((val: any) => val.message);
-      return res.status(400).json({ message: messages.join(', ') });
+      // Added translation key prefix for validation errors
+      return res.status(400).json({ message: res.__('validation_error_prefix') + messages.join(', ') });
     }
     if (error.code === 11000) {
       const field = Object.keys(error.keyValue)[0];
       const value = error.keyValue[field];
-      return res.status(400).json({ message: `A user with that ${field}: ${value} already exists.` });
+      // Replaced template string with translation key and arguments
+      return res.status(400).json({ message: res.__('duplicate_field_error', field, value) });
     }
     console.error(error);
-    res.status(500).json({ message: 'Server error during registration' });
+    // Replaced hardcoded string with translation key
+    res.status(500).json({ message: res.__('server_error_registration') });
   }
 };
 
@@ -71,26 +77,30 @@ export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ message: 'Please enter all fields' });
+    // Replaced hardcoded string with translation key
+    return res.status(400).json({ message: res.__('please_include_all_auth_fields') }); // Reusing key
   }
 
   try {
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      // Replaced hardcoded string with translation key
+      return res.status(400).json({ message: res.__('invalid_credentials') });
     }
 
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      // Replaced hardcoded string with translation key
+      return res.status(400).json({ message: res.__('invalid_credentials') }); // Reusing key
     }
 
     const token = createToken(user._id as Types.ObjectId);
 
     res.status(200).json({
-      message: 'Logged in successfully',
+      // Replaced hardcoded string with translation key
+      message: res.__('login_successful'),
       user: {
         _id: user._id,
         username: user.username,
@@ -100,7 +110,8 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error during login' });
+    // Replaced hardcoded string with translation key
+    res.status(500).json({ message: res.__('server_error_login') });
   }
 };
 
@@ -110,19 +121,17 @@ export const loginUser = async (req: Request, res: Response) => {
 export const getUserProfile = async (req: Request, res: Response) => {
   // `req.user` is populated by the `protect` middleware
   if (!req.user) {
-    return res.status(401).json({ message: 'Not authorized, user not found' });
+    // Replaced hardcoded string with translation key
+    return res.status(401).json({ message: res.__('not_authorized_user_not_found') });
   }
 
-  // We are already sending the user object in the login response.
-  // This route is useful if the frontend needs to re-fetch user data
-  // without a full login, or if initial login response was slim.
   res.status(200).json({
-    message: 'User profile fetched successfully',
+    // Replaced hardcoded string with translation key
+    message: res.__('profile_fetched_successfully'),
     user: {
       _id: req.user._id,
       username: req.user.username,
       email: req.user.email,
-      // Add any other non-sensitive fields you want to expose, e.g., createdAt
       createdAt: req.user.createdAt,
     },
   });
@@ -133,7 +142,8 @@ export const getUserProfile = async (req: Request, res: Response) => {
 // NEW: @access  Private
 export const updateUserProfile = async (req: Request, res: Response) => {
   if (!req.user) {
-    return res.status(401).json({ message: 'Not authorized, user not found' });
+    // Replaced hardcoded string with translation key
+    return res.status(401).json({ message: res.__('not_authorized_user_not_found') }); // Reusing key
   }
 
   const { username, email } = req.body;
@@ -142,15 +152,16 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     const user = await User.findById(req.user._id);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      // Replaced hardcoded string with translation key
+      return res.status(404).json({ message: res.__('user_not_found_general') }); // New key
     }
 
     // Check for duplicate email if email is being changed
     if (email && email !== user.email) {
       const emailExists = await User.findOne({ email });
-      // Corrected: Add type assertions for _id
       if (emailExists && (emailExists._id as Types.ObjectId).toString() !== (user._id as Types.ObjectId).toString()) {
-        return res.status(400).json({ message: 'Email already in use by another account' });
+        // Replaced hardcoded string with translation key
+        return res.status(400).json({ message: res.__('email_already_in_use') }); // New key
       }
     }
 
@@ -161,7 +172,8 @@ export const updateUserProfile = async (req: Request, res: Response) => {
     await user.save({ validateBeforeSave: true }); // Ensure Mongoose validators run
 
     res.status(200).json({
-      message: 'Profile updated successfully',
+      // Replaced hardcoded string with translation key
+      message: res.__('profile_updated_successfully'), // New key
       user: {
         _id: user._id,
         username: user.username,
@@ -171,10 +183,12 @@ export const updateUserProfile = async (req: Request, res: Response) => {
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map((val: any) => val.message);
-      return res.status(400).json({ message: messages.join(', ') });
+      // Added translation key prefix for validation errors
+      return res.status(400).json({ message: res.__('validation_error_prefix') + messages.join(', ') });
     }
     console.error(error);
-    res.status(500).json({ message: 'Server error during profile update' });
+    // Replaced hardcoded string with translation key
+    res.status(500).json({ message: res.__('server_error_profile_update') }); // New key
   }
 };
 
@@ -183,13 +197,15 @@ export const updateUserProfile = async (req: Request, res: Response) => {
 // NEW: @access  Private
 export const updatePassword = async (req: Request, res: Response) => {
   if (!req.user) {
-    return res.status(401).json({ message: 'Not authorized, user not found' });
+    // Replaced hardcoded string with translation key
+    return res.status(401).json({ message: res.__('not_authorized_user_not_found') }); // Reusing key
   }
 
   const { currentPassword, newPassword } = req.body;
 
   if (!currentPassword || !newPassword) {
-    return res.status(400).json({ message: 'Please provide current and new passwords' });
+    // Replaced hardcoded string with translation key
+    return res.status(400).json({ message: res.__('please_provide_passwords') }); // New key
   }
 
   try {
@@ -197,26 +213,30 @@ export const updatePassword = async (req: Request, res: Response) => {
     const user = await User.findById(req.user._id).select('+password');
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      // Replaced hardcoded string with translation key
+      return res.status(404).json({ message: res.__('user_not_found_general') }); // Reusing new key
     }
 
     // Check if current password is correct
     const isMatch = await user.comparePassword(currentPassword);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid current password' });
+      // Replaced hardcoded string with translation key
+      return res.status(400).json({ message: res.__('invalid_current_password') }); // New key
     }
 
     // Update password
     user.password = newPassword;
     await user.save({ validateBeforeSave: true }); // Mongoose pre-save hook for hashing will run
 
-    res.status(200).json({ message: 'Password updated successfully' });
+    res.status(200).json({ message: res.__('password_updated_successfully') }); // New key
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map((val: any) => val.message);
-      return res.status(400).json({ message: messages.join(', ') });
+      // Added translation key prefix for validation errors
+      return res.status(400).json({ message: res.__('validation_error_prefix') + messages.join(', ') });
     }
     console.error(error);
-    res.status(500).json({ message: 'Server error during password update' });
+    // Replaced hardcoded string with translation key
+    res.status(500).json({ message: res.__('server_error_password_update') }); // New key
   }
 };

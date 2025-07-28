@@ -1,26 +1,64 @@
 @hostname=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4N2U5MTk5ZTgyNTk0YzgwM2Q2ZmQ1NyIsImlhdCI6MTc1MzEyNTI5MCwiZXhwIjoxNzUzMTI4ODkwfQ.1eIljl2q1lX8hjp5JPMFd6LFhoQNJxNASPB9IzxYhD0
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODc0MTBkZWQ2NzI3NDZiMWIxMTkzOCIsImlhdCI6MTc1MzcxODQ1OCwiZXhwIjoxNzUzNzIyMDU4fQ.d9StNQ8PSuJSp_NC1C4mnIKr2CI5-MPvOp5V28WSaAU
+@token1=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdhNTVkN2MyOWM0MzkyODA3YmRjOCIsImlhdCI6MTc1MzcyMDE1OCwiZXhwIjoxNzUzNzIzNzU4fQ.BX587pnZ0VAed2m8uQUvKTVpb7bOeAUK3orqs4ft188
 
-###
+### Authentication & User Management ###
+### Register a New User
 POST {{hostname}}/api/auth/register
 Content-Type: application/json
 
 {
-  "username": "testuser",
-  "email": "test@example.com",
-  "password": "password123"
+  "username": "gogan",
+  "email": "gogan@example.com",
+  "password": "password1995"
 }
 
-###
+# {
+#   "username": "test",
+#   "email": "testuser@example.com",
+#   "password": "password1998"
+# }
+
+### Login User
 POST {{hostname}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "test@example.com",
-  "password": "password123"
+  "email": "testuser@example.com",
+  "password": "password1998"
 }
 
+### Get User Profile (Requires Authentication)
+GET {{hostname}}/api/auth/profile
+Authorization: Bearer {{token}}
+
+### Update User Profile (Requires Authentication)
+PUT {{hostname}}/api/auth/profile
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "updated_testuser",
+  "email": "updated_test@example.com"
+}
+
+### Update User Password (Requires Authentication)
+PUT {{hostname}}/api/auth/update-password
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "currentPassword": "password1998", "newPassword": "newSecurePassword123" } 
+
 ###
+PUT {{hostname}}/api/auth/update-password
+Content-Type: application/json
+Accept-Language: de
+Authorization: Bearer {{token}}
+
+{ "currentPassword": "wrongPassword", "newPassword": "anotherNewPassword" }
+
+### Recipe Management ###
+### Create a New Recipe (Requires Authentication)
 POST {{hostname}}/api/recipes
 Content-Type: application/json
 Authorization: Bearer {{token}}
@@ -48,44 +86,44 @@ Authorization: Bearer {{token}}
   "image": "https://example.com/carbonara.jpg"
 }
 
-###
+### Get All Recipes (Public)
 GET {{hostname}}/api/recipes
 Authorization: Bearer {{token}}
 
-###
-GET {{hostname}}/api/recipes/687e84ed3ce9f1b3434036e2
-Authorization: Bearer {{token}}
+### Get Single Recipe by ID (Public)
+GET {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
+Authorization: Bearer {{token1}}
 
-###
-PUT {{hostname}}/api/recipes/687e84ed3ce9f1b3434036e2
+### Update Recipe (Requires Authentication & Owner Only)
+PUT {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "description": "An even better classic Italian pasta dish with eggs, hard cheese, cured pork, and black pepper."
+  "title": "Super Delicious Spaghetti Carbonara (Updated)"
 }
 
-###
-DELETE {{hostname}}/api/recipes/687e84ed3ce9f1b3434036e2
+### Delete Recipe (Requires Authentication & Owner Only)
+DELETE {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
 Authorization: Bearer {{token}}
 
-###
+### Rating Management ###
+### Create a Rating (Requires Authentication)
 POST {{hostname}}/api/ratings
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "recipe": "687e84ed3ce9f1b3434036e2",
+  "recipe": "68879ed682eeb4846690faa9",
   "rating": 5,
   "comment": "Absolutely delicious! A new family favorite."
 }
 
-###
-GET {{hostname}}/api/ratings/687e84ed3ce9f1b3434036e2
-Authorization: Bearer {{token}}
+### Get Ratings for a Recipe (Public)
+GET {{hostname}}/api/ratings/68879ed682eeb4846690faa9
 
-###
-PUT {{hostname}}/api/ratings/687e85403ce9f1b3434036ef
+### Update Rating (Requires Authentication & Owner Only)
+PUT {{hostname}}/api/ratings/6887a7677c29c4392807bde1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -94,38 +132,7 @@ Authorization: Bearer {{token}}
   "comment": "Still great, but maybe could use a tiny bit more salt."
 }
 
-###
-DELETE {{hostname}}/api/ratings/687e85403ce9f1b3434036ef
+### Delete Rating (Requires Authentication & Owner Only)
+DELETE {{hostname}}/api/ratings/6887a7677c29c4392807bde1
 Authorization: Bearer {{token}}
 
-###
-GET {{hostname}}/api/auth/profile
-Authorization: Bearer {{token}}
-
-###
-PUT {{hostname}}/api/auth/profile
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{ "username": "newTestUser", "email": "newtest@example.com" } 
-
-###
-PUT {{hostname}}/api/auth/profile
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{ "email": "email_of_second_user@example.com" }
-
-###
-PUT {{hostname}}/api/auth/update-password
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{ "currentPassword": "password123", "newPassword": "newSecurePassword123" } 
-
-###
-PUT {{hostname}}/api/auth/update-password
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{ "currentPassword": "wrongPassword", "newPassword": "anotherNewPassword" }

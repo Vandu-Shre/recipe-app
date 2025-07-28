@@ -20,14 +20,12 @@ const PORT = process.env.PORT || 5000;
 // NEW: Call the setup function to configure i18n and get its middleware
 const i18nMiddleware = setupI18n();
 
-
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 // NEW: Use the i18n middleware
 app.use(i18nMiddleware);
-
 
 // MongoDB Connection
 const MONGO_URI = process.env.MONGO_URI;

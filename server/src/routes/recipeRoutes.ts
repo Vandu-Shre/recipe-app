@@ -1,25 +1,20 @@
 // server/src/routes/recipeRoutes.ts
-import { Router } from 'express';
-// Corrected import: All functions are named exports from recipeController
-import {
-  createRecipe,
-  getAllRecipes,
-  getRecipeById,
-  updateRecipe,
-  deleteRecipe,
-} from '../controllers/recipeController'; // <--- Corrected this import line
+import express from 'express';
+import { createRecipe, getAllRecipes, getRecipeById, updateRecipe, deleteRecipe } from '../controllers/recipeController';
 import { protect } from '../middleware/authMiddleware';
 
-const router = Router();
+const router = express.Router();
 
-// Public routes (no authentication needed to view recipes)
-router.get('/', getAllRecipes); // GET /api/recipes
-router.get('/:id', getRecipeById); // GET /api/recipes/:id
+// Route for creating a recipe (and getting all recipes)
+// The 'protect' middleware MUST come BEFORE createRecipe for POST requests
+router.route('/')
+  .post(protect, createRecipe) // <-- Make sure 'protect' is here for POST
+  .get(getAllRecipes);
 
-// Private routes (authentication required)
-// Apply 'protect' middleware before the controller function
-router.post('/', protect, createRecipe); // POST /api/recipes
-router.put('/:id', protect, updateRecipe); // PUT /api/recipes/:id
-router.delete('/:id', protect, deleteRecipe); // DELETE /api/recipes/:id
+// Routes for specific recipe by ID
+router.route('/:id')
+  .get(getRecipeById)
+  .put(protect, updateRecipe) // <-- 'protect' here for PUT
+  .delete(protect, deleteRecipe); // <-- 'protect' here for DELETE
 
 export default router;

@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true, // <--- THIS IS CRUCIAL FOR IMPORTING JSON
-    "sourceMap": true // Good for debugging
+    "sourceMap": true // Good for debugging,
   },
   "include": ["src/**/*.ts", "src/**/*.json"], // <--- THIS IS CRUCIAL: include all TS and JSON files from src
   "exclude": ["node_modules"]
