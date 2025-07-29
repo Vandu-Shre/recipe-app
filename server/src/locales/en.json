@@ -51,5 +51,6 @@
 	"login_successful": "login_successful",
 	"profile_fetched_successfully": "profile_fetched_successfully",
 	"user_registered_successfully": "user_registered_successfully",
-	"invalid_credentials": "invalid_credentials"
+	"invalid_credentials": "invalid_credentials",
+	"rating_already_submitted": "rating_already_submitted"
 }

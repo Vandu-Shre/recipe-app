@@ -5,19 +5,24 @@ import Recipe from '../models/Recipe'; // We need to access the Recipe model
 import { Types } from 'mongoose';
 
 // Helper function to recalculate average rating for a recipe
-async function updateRecipeAverageRating(recipeId: Types.ObjectId) {
+async function updateRecipeAverageRating(recipeId: Types.ObjectId) { // Function parameter type
+  const objectIdRecipeId = (typeof recipeId === 'string' && Types.ObjectId.isValid(recipeId)) 
+                           ? new Types.ObjectId(recipeId) 
+                           : recipeId;
   const stats = await Rating.aggregate([
     {
-      $match: { recipe: recipeId }, // Match ratings for this specific recipe
+      $match: { recipe: objectIdRecipeId }, // Use the potentially converted ID here
     },
     {
       $group: {
-        _id: '$recipe', // Group by recipe ID
-        averageRating: { $avg: '$rating' }, // Calculate average of 'rating' field
-        ratingCount: { $sum: 1 }, // Count the number of ratings
+        _id: '$recipe', 
+        averageRating: { $avg: '$rating' }, 
+        ratingCount: { $sum: 1 }, 
       },
     },
   ]);
+
+  console.log("DEBUG: Aggregation stats value-->", stats);
 
   if (stats.length > 0) {
     const { averageRating, ratingCount } = stats[0];

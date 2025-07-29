@@ -19,7 +19,8 @@ router.post('/', protect, createRating); // POST /api/ratings
 router.get('/:recipeId', getRecipeRatings); // GET /api/ratings/:recipeId
 
 // Routes for updating and deleting a specific rating (protected)
-router.put('/:ratingId', protect, updateRating); // PUT /api/ratings/:ratingId
-router.delete('/:ratingId', protect, deleteRating); // DELETE /api/ratings/:ratingId
+router.route('/:ratingId')
+  .put(protect, updateRating)
+  .delete(protect, deleteRating)
 
 export default router;

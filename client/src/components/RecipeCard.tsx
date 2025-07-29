@@ -9,9 +9,10 @@ interface RecipeCardProps {
   rating: number;
   time: string;
   servings: string;
+  ratingCount: number;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, time, servings }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, time, servings, ratingCount }) => {
   return (
     // Added 'h-full' to make the card take the full height available in its grid cell
     <div className="bg-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer flex flex-col h-full">
@@ -27,7 +28,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, t
           <div className="flex items-center mr-3">
             <span className="text-yellow-500 text-base">★</span>
             <span className="ml-1">{rating.toFixed(1)}</span>
-            <span className="text-xs text-gray-500 ml-1">({Math.floor(rating * 20)})</span>
+            <span className="text-xs text-gray-500 ml-1">({ratingCount})</span>
           </div>
           <div className="flex items-center mr-3">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-gray-500">

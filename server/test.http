@@ -1,5 +1,5 @@
 @hostname=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkMjExNmFjY2U0OWU5MzQ2MWMyYiIsImlhdCI6MTc1MzgwODc1MywiZXhwIjoxNzUzODEyMzUzfQ.etxisFp5bKMtfs6G8FkGBUrWMVtPXnCqpvhRzFQX2Lg
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkMjExNmFjY2U0OWU5MzQ2MWMyYiIsImlhdCI6MTc1MzgxOTY4NSwiZXhwIjoxNzUzODIzMjg1fQ.xP4l2HbDZOfLpxjOfJyb4UCE2dbaQVQmBo2bDw4N0Ks
 @token1=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdhNTVkN2MyOWM0MzkyODA3YmRjOCIsImlhdCI6MTc1MzcyMDE1OCwiZXhwIjoxNzUzNzIzNzU4fQ.BX587pnZ0VAed2m8uQUvKTVpb7bOeAUK3orqs4ft188
 
 // Vandana | vandana@example.com | vanduisagenius
@@ -118,7 +118,7 @@ GET {{hostname}}/api/recipes
 Authorization: Bearer {{token}}
 
 ### Get Single Recipe by ID (Public)
-GET {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
+GET {{hostname}}/api/recipes/6888ff8e7b6a45d0be8bd9c7
 Authorization: Bearer {{token}}
 
 ### Update Recipe (Requires Authentication & Owner Only)
@@ -147,10 +147,10 @@ Authorization: Bearer {{token}}
 }
 
 ### Get Ratings for a Recipe (Public)
-GET {{hostname}}/api/ratings/68879ed682eeb4846690faa9
+GET {{hostname}}/api/ratings/6888ff8e7b6a45d0be8bd9c7
 
 ### Update Rating (Requires Authentication & Owner Only)
-PUT {{hostname}}/api/ratings/6887a7677c29c4392807bde1
+PUT {{hostname}}/api/ratings/688920888899035b8f381497
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

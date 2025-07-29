@@ -1,4 +1,5 @@
 // client/src/services/recipeService.ts
+// ... (keep all existing imports and interfaces like BackendRecipe, Recipe, CreateRecipeData, UpdateRecipeData)
 import axios from 'axios';
 import api from './api';
 
@@ -12,7 +13,7 @@ interface BackendRecipe {
   cookingTime: number;
   servings: number;
   image: string;
-  owner?: {
+  owner?: { // Ensure owner is correctly typed here as it's crucial for delete/edit checks
     _id: string;
     username: string;
   };
@@ -36,6 +37,7 @@ export interface Recipe {
   image: string;
   title: string; // Mapped from name
   author: string; // Mapped from owner.username
+  authorId: string; // <--- ADD THIS for owner check
   rating: number; // Mapped from averageRating
   time: string; // Mapped from cookingTime (needs conversion)
   servings: string; // Mapped from servings (needs conversion)
@@ -61,6 +63,7 @@ const mapBackendRecipeToFrontend = (backendRecipe: BackendRecipe): Recipe => ({
   image: backendRecipe.image,
   title: backendRecipe.name,
   author: backendRecipe.owner?.username || 'Unknown Author',
+  authorId: backendRecipe.owner?._id || '', // <--- Map owner ID
   rating: backendRecipe.averageRating,
   time: `${backendRecipe.cookingTime} min`,
   servings: `${backendRecipe.servings} servings`,
@@ -88,12 +91,10 @@ export const getRecipes = async (): Promise<Recipe[]> => {
 export const getRecipeById = async (id: string): Promise<Recipe> => {
   console.log(`[recipeService] Attempting to fetch recipe by ID: ${id}`);
   try {
-    // --- UPDATED THIS LINE ---
-    // Now expecting the SingleRecipeApiResponse structure, and passing response.data.recipe to the mapper
     const response = await api.get<SingleRecipeApiResponse>(`/api/recipes/${id}`);
     console.log('[recipeService] Raw API response for single recipe:', response.data);
     
-    const mappedRecipe = mapBackendRecipeToFrontend(response.data.recipe); // <--- Key change: Access .recipe
+    const mappedRecipe = mapBackendRecipeToFrontend(response.data.recipe);
     console.log('[recipeService] Mapped recipe for frontend:', mappedRecipe);
     return mappedRecipe;
   } catch (error: unknown) {
@@ -128,10 +129,33 @@ export const createRecipe = async (recipeData: CreateRecipeData, authToken?: str
   }
 };
 
+// --- NEW FUNCTION FOR DELETING RECIPES ---
+export const deleteRecipe = async (recipeId: string, token: string): Promise<void> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    await api.delete(`/api/recipes/${recipeId}`, config);
+    console.log(`[recipeService] Recipe ${recipeId} deleted successfully.`);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(`[recipeService] Error deleting recipe ${recipeId}:`, error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || `Failed to delete recipe ${recipeId}.`);
+    } else {
+      console.error('An unexpected error occurred while deleting recipe:', error);
+      throw new Error('An unexpected error occurred while deleting recipe.');
+    }
+  }
+};
+
+
 const recipeService = {
   getRecipes,
   getRecipeById,
   createRecipe,
+  deleteRecipe, // <--- Add to export
 };
 
 export default recipeService;

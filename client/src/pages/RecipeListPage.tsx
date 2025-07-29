@@ -74,6 +74,7 @@ const RecipeListPage: React.FC = () => {
                 rating={recipe.rating}
                 time={recipe.time}
                 servings={recipe.servings}
+                ratingCount={recipe.ratingCount}
               />
             </Link>
           ))
