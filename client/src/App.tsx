@@ -6,27 +6,35 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import ProfilePage from './pages/ProfilePage';
 import RecipeListPage from './pages/RecipeListPage';
-import Navbar from './components/Navbar'; 
+import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
+import AddRecipePage from './pages/AddRecipePage';
+import RecipeDetailPage from './pages/RecipeDetailPage';
+
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <div className="App flex flex-col min-h-screen"> 
-      <Navbar /> 
-      <main className="flex-grow"> 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<AuthPage />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/profile" element={<ProfilePage />} />
+    <AuthProvider>
+      <div className="App flex flex-col min-h-screen text-gray-100 font-sans">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/recipes" element={<RecipeListPage />} />
-          </Route>
+            <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+            
+            <Route element={<PrivateRoute />}>
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/add-recipe" element={<AddRecipePage />} />
+            </Route>
 
-          {/* Optional: A catch-all for 404s */}
-          <Route path="*" element={<h1 className="text-center mt-20 text-4xl">404 - Not Found</h1>} />
-        </Routes>
-      </main>
-    </div>
+            <Route path="*" element={<h1 className="text-center mt-20 text-4xl">404 - Not Found</h1>} />
+          </Routes>
+        </main>
+      </div>
+    </AuthProvider>
   );
 }
 

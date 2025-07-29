@@ -1,91 +1,68 @@
 // client/src/context/AuthContext.tsx
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import type { ReactNode } from 'react';
-import axios, { type AxiosInstance } from 'axios';
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import axios from 'axios';
 
-// 1. Define types
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+
+// Define the shape of the user object
 interface User {
-  _id: string;
+  id: string;
   username: string;
   email: string;
-  // Add other user properties you expect from your backend /profile endpoint
+  // Add any other user properties your backend returns
 }
 
+// Define the shape of the Auth Context
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  isLoading: boolean;
+  authToken: string | null; // ADDED: authToken property
   login: (email: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
-  api: AxiosInstance; // Axios instance configured with token
+  isLoading: boolean;
 }
 
-// 2. Create the Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// 3. Create the Provider Component
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [isLoading, setIsLoading] = useState(true); // Initial loading state
+  const [authToken, setAuthToken] = useState<string | null>(null); // State for the token
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Configure Axios instance
-  const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // Point to your backend API
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-
-  // Interceptor to attach token to requests
   useEffect(() => {
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      localStorage.setItem('token', token);
-    } else {
-      delete api.defaults.headers.common['Authorization'];
-      localStorage.removeItem('token');
-    }
-  }, [token]); // Re-run when token changes
+    // Attempt to load token and user from localStorage on mount
+    const storedToken = localStorage.getItem('authToken');
+    const storedUser = localStorage.getItem('user');
 
-  // Function to load user from token (e.g., on app start or refresh)
-  const loadUser = async () => {
-    if (!token) {
-      setIsLoading(false);
-      return;
+    if (storedToken && storedUser) {
+      try {
+        setAuthToken(storedToken);
+        setUser(JSON.parse(storedUser));
+        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`; // Set default header for Axios
+      } catch (e) {
+        console.error("Failed to parse stored user or token", e);
+        localStorage.clear(); // Clear invalid data
+        setAuthToken(null);
+        setUser(null);
+      }
     }
-    try {
-      const res = await api.get('/auth/profile');
-      setUser(res.data.user);
-    } catch (error) {
-      console.error('Failed to load user profile:', error);
-      setToken(null); // Clear token if invalid
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Load user on component mount
-  useEffect(() => {
-    loadUser();
+    setIsLoading(false);
   }, []);
 
-  // Authentication functions
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const res = await api.post('/auth/login', { email, password });
-      setToken(res.data.token);
-      setUser(res.data.user);
-    } catch (error: any) {
-      console.error('Login failed:', error.response?.data?.message || error.message);
-      throw error; // Re-throw to be handled by the form component
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
+      const { token, user: userData } = response.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setAuthToken(token);
+      setUser(userData);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Set default header
     } finally {
       setIsLoading(false);
     }
@@ -94,42 +71,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (username: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      const res = await api.post('/auth/register', { username, email, password });
-      setToken(res.data.token);
-      setUser(res.data.user);
-    } catch (error: any) {
-      console.error('Registration failed:', error.response?.data?.message || error.message);
-      throw error; // Re-throw to be handled by the form component
+      const response = await axios.post(`${BASE_URL}/api/auth/register`, { username, email, password });
+      const { token, user: userData } = response.data;
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setAuthToken(token);
+      setUser(userData);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`; // Set default header
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = () => {
-    setToken(null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    setAuthToken(null);
     setUser(null);
-    // localStorage.removeItem('token'); // Handled by useEffect
-    // delete api.defaults.headers.common['Authorization']; // Handled by useEffect
+    delete axios.defaults.headers.common['Authorization']; // Remove default header
   };
 
-  const contextValue: AuthContextType = {
+  const value = {
     user,
-    token,
-    isLoading,
+    authToken, // Make sure authToken is included in the context value
     login,
     register,
     logout,
-    api,
+    isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// 4. Custom Hook for easy consumption
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

@@ -44,7 +44,8 @@ const AuthPage: React.FC = () => {
 
   if (isLoading && !user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 text-gray-700 text-xl">
+      // REMOVED: bg-gray-50 from here. The body background will now show during loading.
+      <div className="flex items-center justify-center min-h-screen text-gray-700 text-xl">
         Loading authentication...
       </div>
     );

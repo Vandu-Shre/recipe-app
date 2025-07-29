@@ -6,7 +6,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}", // Crucial for scanning your React components
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        lora: ['Inter', 'Lora', 'serif'],
+      }
+    },
   },
   plugins: [],
 };

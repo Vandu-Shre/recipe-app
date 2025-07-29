@@ -1,5 +1,5 @@
 @hostname=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODc0MTBkZWQ2NzI3NDZiMWIxMTkzOCIsImlhdCI6MTc1MzcxODQ1OCwiZXhwIjoxNzUzNzIyMDU4fQ.d9StNQ8PSuJSp_NC1C4mnIKr2CI5-MPvOp5V28WSaAU
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkMjExNmFjY2U0OWU5MzQ2MWMyYiIsImlhdCI6MTc1Mzc5Mzg3MiwiZXhwIjoxNzUzNzk3NDcyfQ.A6iG887aH2208k-OmhINS5oqoj-A5VCCqF3yoHPnTjA
 @token1=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdhNTVkN2MyOWM0MzkyODA3YmRjOCIsImlhdCI6MTc1MzcyMDE1OCwiZXhwIjoxNzUzNzIzNzU4fQ.BX587pnZ0VAed2m8uQUvKTVpb7bOeAUK3orqs4ft188
 
 // Vandana | vandana@example.com | vanduisagenius
@@ -26,9 +26,14 @@ POST {{hostname}}/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "testuser@example.com",
-  "password": "password1998"
+  "email": "vandana@example.com",
+  "password": "vanduisagenius"
 }
+
+# {
+#   "email": "updated_test@example.com",
+#   "password": "newSecurePassword123"
+# }
 
 ### Get User Profile (Requires Authentication)
 GET {{hostname}}/api/auth/profile
@@ -66,26 +71,46 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Spaghetti Carbonara",
-  "description": "A classic Italian pasta dish with eggs, hard cheese, cured pork, and black pepper.",
+  "name": "Classic Chocolate Cupcakes",
+  "description": "Moist and rich chocolate cupcakes topped with a creamy chocolate frosting, a timeless treat for any occasion.",
   "ingredients": [
-    "200g spaghetti",
-    "100g guanciale or pancetta",
-    "2 large eggs",
-    "50g Pecorino Romano cheese",
-    "Black pepper"
+    "**For the Cupcakes:**",
+    "1 ½ cups all-purpose flour",
+    "¾ cup granulated sugar",
+    "½ cup unsweetened cocoa powder",
+    "1 tsp baking soda",
+    "½ tsp baking powder",
+    "¼ tsp salt",
+    "¾ cup buttermilk (or ¾ cup milk + 1 tbsp lemon juice/vinegar, let sit 5 mins)",
+    "½ cup vegetable oil",
+    "1 large egg",
+    "1 tsp vanilla extract",
+    "½ cup hot water or hot coffee",
+    "**For the Chocolate Buttercream Frosting:**",
+    "½ cup (113g) unsalted butter, softened",
+    "2 cups powdered sugar, sifted",
+    "½ cup unsweetened cocoa powder, sifted",
+    "3-4 tbsp milk or cream",
+    "1 tsp vanilla extract",
+    "Pinch of salt",
+    "Optional: chocolate sprinkles or shavings for garnish"
   ],
   "instructions": [
-    "Cook spaghetti according to package directions.",
-    "While spaghetti cooks, crisp guanciale in a pan.",
-    "Whisk eggs, grated cheese, and plenty of black pepper in a bowl.",
-    "Drain spaghetti, reserving some pasta water. Add spaghetti to the pan with guanciale.",
-    "Remove from heat, quickly add egg mixture, and a splash of pasta water. Toss vigorously until creamy.",
-    "Serve immediately, garnished with more Pecorino and pepper."
+    "**Make the Cupcakes:** Preheat oven to 175°C (350°F). Line a 12-cup muffin tin with paper liners.",
+    "In a large bowl, whisk together flour, sugar, cocoa powder, baking soda, baking powder, and salt.",
+    "In a separate medium bowl, whisk together buttermilk, vegetable oil, egg, and vanilla extract.",
+    "Pour the wet ingredients into the dry ingredients. Mix until just combined.",
+    "Gradually add the hot water (or coffee) to the batter, mixing until smooth. The batter will be thin.",
+    "Fill each cupcake liner about two-thirds full.",
+    "Bake for 18-22 minutes, or until a toothpick inserted into the center comes out clean. Let cool in the muffin tin for a few minutes before transferring to a wire rack to cool completely.",
+    "**Make the Frosting:** In a large bowl, beat softened butter with an electric mixer until creamy.",
+    "Gradually add sifted powdered sugar and cocoa powder, mixing on low speed until combined, then increase speed and beat until fluffy.",
+    "Beat in milk/cream (start with 3 tbsp and add more if needed for desired consistency), vanilla extract, and pinch of salt until smooth and creamy.",
+    "**Assemble:** Once cupcakes are completely cool, frost them using a knife or piping bag. Garnish with sprinkles or chocolate shavings if desired."
   ],
-  "cookingTime": 20,
-  "servings": 2,
-  "image": "https://example.com/carbonara.jpg"
+  "cookingTime": 45,
+  "servings": 12,
+  "image": "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y3VwY2FrZXxlbnwwfHwwfHx8MA%3D%3D"
 }
 
 ### Get All Recipes (Public)
@@ -94,19 +119,19 @@ Authorization: Bearer {{token}}
 
 ### Get Single Recipe by ID (Public)
 GET {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
-Authorization: Bearer {{token1}}
+Authorization: Bearer {{token}}
 
 ### Update Recipe (Requires Authentication & Owner Only)
-PUT {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
+PUT {{hostname}}/api/recipes/6888c77a7b6a45d0be8bd887
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "title": "Super Delicious Spaghetti Carbonara (Updated)"
+  "image": "https://plus.unsplash.com/premium_photo-1723032016322-6ac8616b2f39?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8VmVnZXRhYmxlJTIwU3RpciUyMGZyeXxlbnwwfHwwfHx8MA%3D%3D"
 }
 
 ### Delete Recipe (Requires Authentication & Owner Only)
-DELETE {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
+DELETE {{hostname}}/api/recipes/6888c6247b6a45d0be8bd86d
 Authorization: Bearer {{token}}
 
 ### Rating Management ###
