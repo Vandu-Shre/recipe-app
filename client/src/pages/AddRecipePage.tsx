@@ -104,7 +104,7 @@ const AddRecipePage: React.FC = () => {
     <div className="w-full px-4 py-8 min-h-screen"> 
       <div className="max-w-2xl mx-auto"> {/* Inner container for centering content */}
         <h1 className="text-4xl font-extrabold text-white text-center mb-8">Add New Recipe</h1>
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-xl space-y-6">
+        <form onSubmit={handleSubmit} className="bg-gray-200 p-8 rounded-lg shadow-xl space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Recipe Name</label>
             <input

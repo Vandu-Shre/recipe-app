@@ -1,5 +1,5 @@
 @hostname=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkMjExNmFjY2U0OWU5MzQ2MWMyYiIsImlhdCI6MTc1Mzc5Mzg3MiwiZXhwIjoxNzUzNzk3NDcyfQ.A6iG887aH2208k-OmhINS5oqoj-A5VCCqF3yoHPnTjA
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdkMjExNmFjY2U0OWU5MzQ2MWMyYiIsImlhdCI6MTc1MzgwODc1MywiZXhwIjoxNzUzODEyMzUzfQ.etxisFp5bKMtfs6G8FkGBUrWMVtPXnCqpvhRzFQX2Lg
 @token1=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ODdhNTVkN2MyOWM0MzkyODA3YmRjOCIsImlhdCI6MTc1MzcyMDE1OCwiZXhwIjoxNzUzNzIzNzU4fQ.BX587pnZ0VAed2m8uQUvKTVpb7bOeAUK3orqs4ft188
 
 // Vandana | vandana@example.com | vanduisagenius
@@ -71,7 +71,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Classic Chocolate Cupcakes",
+  "name": "Chocolate Cupcakes",
   "description": "Moist and rich chocolate cupcakes topped with a creamy chocolate frosting, a timeless treat for any occasion.",
   "ingredients": [
     "**For the Cupcakes:**",
@@ -122,12 +122,12 @@ GET {{hostname}}/api/recipes/6887a1d782eeb4846690fab7
 Authorization: Bearer {{token}}
 
 ### Update Recipe (Requires Authentication & Owner Only)
-PUT {{hostname}}/api/recipes/6888c77a7b6a45d0be8bd887
+PUT {{hostname}}/api/recipes/6888ff8e7b6a45d0be8bd9c7
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "image": "https://plus.unsplash.com/premium_photo-1723032016322-6ac8616b2f39?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8VmVnZXRhYmxlJTIwU3RpciUyMGZyeXxlbnwwfHwwfHx8MA%3D%3D"
+  "name": "Chocolate Cupcakes"
 }
 
 ### Delete Recipe (Requires Authentication & Owner Only)

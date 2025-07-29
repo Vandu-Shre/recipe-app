@@ -7,6 +7,9 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        'off-white': '#FAFAFA',
+      },
       fontFamily: {
         lora: ['Inter', 'Lora', 'serif'],
       }

@@ -68,12 +68,13 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="w-full px-4 py-8 min-h-screen">
-      <div className="max-w-4xl mx-auto">
+      {/* Increased max-w from 4xl to 5xl to give more horizontal space */}
+      <div className="max-w-5xl mx-auto">
         <h1 className="text-4xl font-extrabold text-white text-center mb-8">
           Welcome, {user.username}!
         </h1>
 
-        <div className="bg-white p-8 rounded-lg shadow-xl mb-8">
+        <div className="bg-gray-200 p-8 rounded-lg shadow-xl mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Information</h2>
           <p className="text-gray-700 text-lg mb-2">Email: <span className="font-semibold">{user.email}</span></p>
           {/* Removed/Commented out 'Member Since' line as 'createdAt' property does not exist on 'User' type */}
@@ -97,7 +98,7 @@ const ProfilePage: React.FC = () => {
             You haven't created any recipes yet. <Link to="/add-recipe" className="text-amber-500 hover:underline">Add your first one!</Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8"> {/* <--- MODIFIED THIS LINE */}
             {userRecipes.map((recipe) => (
               <Link to={`/recipes/${recipe.id}`} key={recipe.id} className="block">
                 <RecipeCard

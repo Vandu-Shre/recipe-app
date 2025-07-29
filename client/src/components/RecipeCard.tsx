@@ -14,7 +14,7 @@ interface RecipeCardProps {
 const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, time, servings }) => {
   return (
     // Added 'h-full' to make the card take the full height available in its grid cell
-    <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer flex flex-col h-full">
+    <div className="bg-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer flex flex-col h-full">
       <img src={image} alt={title} className="w-full h-48 object-cover" />
       <div className="p-4 flex flex-col flex-grow">
         {/* 'line-clamp-2' will limit the title to 2 lines, truncating with ellipses if longer */}
@@ -23,7 +23,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, t
         <p className="text-gray-600 text-sm mb-2 line-clamp-1">{author}</p>
         <p className="text-gray-500 text-xs line-clamp-1">Cookbook Author, Little</p>
 
-        <div className="flex items-center text-gray-700 text-sm mt-auto pt-3 border-t border-gray-100">
+        <div className="flex items-center text-gray-700 text-sm mt-auto pt-3">
           <div className="flex items-center mr-3">
             <span className="text-yellow-500 text-base">★</span>
             <span className="ml-1">{rating.toFixed(1)}</span>

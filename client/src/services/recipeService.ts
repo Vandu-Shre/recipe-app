@@ -1,6 +1,6 @@
 // client/src/services/recipeService.ts
-import axios from 'axios'; // Needed for axios.isAxiosError
-import api from './api';    // Your configured Axios instance
+import axios from 'axios';
+import api from './api';
 
 // IMPORTANT: Defines the structure of a SINGLE recipe object AS IT COMES DIRECTLY FROM YOUR BACKEND'S 'recipes' array.
 interface BackendRecipe {
@@ -21,6 +21,12 @@ interface BackendRecipe {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+// NEW: Interface for the actual response structure of GET /api/recipes/:id
+interface SingleRecipeApiResponse {
+  message: string;
+  recipe: BackendRecipe; // The actual recipe object is nested here
 }
 
 // THIS IS THE COMPLETE 'Recipe' INTERFACE for your frontend components.
@@ -80,15 +86,22 @@ export const getRecipes = async (): Promise<Recipe[]> => {
 };
 
 export const getRecipeById = async (id: string): Promise<Recipe> => {
+  console.log(`[recipeService] Attempting to fetch recipe by ID: ${id}`);
   try {
-    const response = await api.get<BackendRecipe>(`/api/recipes/${id}`);
-    return mapBackendRecipeToFrontend(response.data);
+    // --- UPDATED THIS LINE ---
+    // Now expecting the SingleRecipeApiResponse structure, and passing response.data.recipe to the mapper
+    const response = await api.get<SingleRecipeApiResponse>(`/api/recipes/${id}`);
+    console.log('[recipeService] Raw API response for single recipe:', response.data);
+    
+    const mappedRecipe = mapBackendRecipeToFrontend(response.data.recipe); // <--- Key change: Access .recipe
+    console.log('[recipeService] Mapped recipe for frontend:', mappedRecipe);
+    return mappedRecipe;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
-        console.error(`Error fetching recipe with ID ${id}:`, error.response?.data || error.message);
+        console.error(`[recipeService] Error fetching recipe with ID ${id}:`, error.response?.data || error.message);
         throw new Error(error.response?.data?.message || `Failed to fetch recipe with ID ${id}`);
     } else {
-        console.error(`An unexpected error occurred while fetching recipe with ID ${id}:`, error);
+        console.error(`[recipeService] An unexpected error occurred while fetching recipe with ID ${id}:`, error);
         throw new Error(`An unexpected error occurred while fetching recipe with ID ${id}`);
     }
   }
