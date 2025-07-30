@@ -1,0 +1,26 @@
+meta {
+  name: Update recipe
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{hostname}}/api/recipes/{{recipeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+body:json {
+  {
+    "title": "Super Delicious Spaghetti Carbonara (Updated)"
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+}

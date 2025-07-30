@@ -1,0 +1,51 @@
+meta {
+  name: Login existing user
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{hostname}}/api/auth/login
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{username}}",
+    "password": "{{password}}"
+  }
+}
+
+body:form-urlencoded {
+  username: {{username}}
+  password: {{password}}
+}
+
+assert {
+  res.body.token: isString
+}
+
+script:post-response {
+  bru.setVar("jwtToken",res.body.token)
+}
+
+tests {
+  // const data = JSON.parse(res);
+  
+  // bru.setEnvVar("authToken", data.token);
+  console.log(res)
+  
+  // Optional: Check status
+  // test("Login successful", () => {
+  // //   expect(res.status).toBe(200);
+  // });
+}
+
+settings {
+  encodeUrl: true
+}

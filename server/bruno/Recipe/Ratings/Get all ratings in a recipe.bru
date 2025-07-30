@@ -1,0 +1,19 @@
+meta {
+  name: Get all ratings in a recipe
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{hostname}}/api/ratings/{{recipeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+settings {
+  encodeUrl: true
+}

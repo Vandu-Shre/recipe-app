@@ -1,0 +1,26 @@
+meta {
+  name: Update user profile
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{hostname}}/api/auth/profile
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+body:json {
+  {
+    "username": "updated_testuser",
+    "email": "updated_testuser2@gmail.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

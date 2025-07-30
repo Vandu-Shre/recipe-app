@@ -1,0 +1,31 @@
+meta {
+  name: Post a new rating
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{hostname}}/api/ratings
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+body:json {
+  {
+    "recipe": "{{recipeId}}",
+    "rating": 2,
+    "comment": "Tasted bland"
+  }
+}
+
+script:post-response {
+  bru.setVar("ratingId",req.body.rating._id)
+}
+
+settings {
+  encodeUrl: true
+}

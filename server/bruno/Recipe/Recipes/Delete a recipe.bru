@@ -1,0 +1,19 @@
+meta {
+  name: Delete a recipe
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{hostname}}/api/recipes/{{recipeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+settings {
+  encodeUrl: true
+}

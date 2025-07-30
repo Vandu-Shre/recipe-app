@@ -1,0 +1,52 @@
+meta {
+  name: Create a new recipe
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{hostname}}/api/recipes
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:bearer {
+  token: {{jwtToken}}
+}
+
+body:json {
+  {
+    "name": "Spaghetti Test",
+    "description": "A classic Italian pasta dish with eggs, hard cheese, cured pork, and black pepper.",
+    "ingredients": [
+      "200g spaghetti",
+      "100g guanciale or pancetta",
+      "2 large eggs",
+      "50g Pecorino Romano cheese",
+      "Black pepper"
+    ],
+    "instructions": [
+      "Cook spaghetti according to package directions.",
+      "While spaghetti cooks, crisp guanciale in a pan.",
+      "Whisk eggs, grated cheese, and plenty of black pepper in a bowl.",
+      "Drain spaghetti, reserving some pasta water. Add spaghetti to the pan with guanciale.",
+      "Remove from heat, quickly add egg mixture, and a splash of pasta water. Toss vigorously until creamy.",
+      "Serve immediately, garnished with more Pecorino and pepper."
+    ],
+    "cookingTime": 20,
+    "servings": 2,
+    "image": "https://example.com/carbonara.jpg"
+  }
+}
+
+script:post-response {
+  bru.setVar("recipeId",res.body.recipe._id);
+}
+
+settings {
+  encodeUrl: true
+}
