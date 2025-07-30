@@ -85,10 +85,18 @@ const mapBackendRecipeToFrontend = (backendRecipe: BackendRecipe): Recipe => ({
   ratingCount: backendRecipe.ratingCount
 });
 
-export const getRecipes = async (): Promise<Recipe[]> => {
+export const getRecipes = async ( pageNum: number ): Promise<{recipes: Recipe[], maxPage: number, currentPage: number}> => {
   try {
-    const response = await api.get<{ message: string; count: number; recipes: BackendRecipe[] }>('/api/recipes');
-    return response.data.recipes.map(mapBackendRecipeToFrontend);
+    const response = await api.get<{ message: string; count: number; maxPage: number; currentPage: number; recipes: BackendRecipe[] }>('/api/recipes', {
+      params: {
+        page: pageNum,
+        limit: 9
+      }
+    });
+    const recipes = response.data.recipes.map(mapBackendRecipeToFrontend);
+    const currentPage = response.data.currentPage;
+    const maxPage = response.data.maxPage;
+    return { recipes, maxPage, currentPage };
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error('Error fetching recipes:', error.response?.data || error.message);
