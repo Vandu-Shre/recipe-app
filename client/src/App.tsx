@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 import AddRecipePage from './pages/AddRecipePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
+import EditRecipePage from './pages/EditRecipePage'; 
 
 import { AuthProvider } from './context/AuthContext';
 
@@ -28,6 +29,7 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/add-recipe" element={<AddRecipePage />} />
+              <Route path="/edit-recipe/:id" element={<EditRecipePage />} /> {/* <--- NEW ROUTE */}
             </Route>
 
             <Route path="*" element={<h1 className="text-center mt-20 text-4xl">404 - Not Found</h1>} />

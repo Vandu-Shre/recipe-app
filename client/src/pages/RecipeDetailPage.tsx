@@ -264,6 +264,7 @@ const RecipeDetailPage: React.FC = () => {
   
   // Check if the current user is the owner of the recipe
   // Corrected: Use user.id instead of user._id
+  console.log("isRecipeOwner", user?.id, recipe.authorId)
   const isRecipeOwner = user && recipe.authorId === user.id;
 
   return (
@@ -271,7 +272,7 @@ const RecipeDetailPage: React.FC = () => {
       <div className="max-w-5xl mx-auto bg-gray-200 p-6 sm:p-8 rounded-lg">
         {/* Back Button */}
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/recipes')}
           className="mb-6 flex items-center text-gray-700 hover:text-amber-800 transition-colors duration-300 text-lg font-medium"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6 mr-2">

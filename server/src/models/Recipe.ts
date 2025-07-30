@@ -1,6 +1,7 @@
 // server/src/models/Recipe.ts
 import { Schema, model, Document, Types, PopulatedDoc } from 'mongoose';
 import { IUser } from './User';
+import { IRating } from './Rating';
 
 // Define the interface for a Recipe document
 export interface IRecipe extends Document {
@@ -13,6 +14,7 @@ export interface IRecipe extends Document {
   servings: number;
   image: string; // URL to an image (optional)
   owner: Types.ObjectId | PopulatedDoc<IUser>; // Reference to the User who created the recipe
+  ratings: Types.ObjectId[] | IRating[];
   averageRating: number; // Will store the calculated average rating
   ratingCount: number; // Number of ratings received
   createdAt: Date;
@@ -68,6 +70,12 @@ const RecipeSchema = new Schema<IRecipe>({
     ref: 'User', // This tells Mongoose which model the ObjectId refers to
     required: [true, 'Recipe must have an owner'],
   },
+  ratings: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Rating', // Reference to your Rating model
+    },
+  ],
   averageRating: {
     type: Number,
     default: 0,

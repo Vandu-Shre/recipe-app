@@ -92,8 +92,15 @@ export const getRecipeById = async (req: Request, res: Response) => {
   }
 
   try {
-    const recipe = await Recipe.findById(id).populate('owner', ['username', 'email']);
-
+    const recipe = await Recipe.findById(id)
+      .populate('owner', ['username', 'email']) 
+      .populate({ 
+        path: 'ratings', 
+        populate: {
+          path: 'user', // Populate the 'user' field *within* each rating
+          select: 'username', // Select only the username from the User model
+        }
+      });
     if (!recipe) {
       return res.status(404).json({ message: res.__('recipe_not_found') });
     }

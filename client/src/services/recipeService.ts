@@ -1,5 +1,5 @@
 // client/src/services/recipeService.ts
-// ... (keep all existing imports and interfaces like BackendRecipe, Recipe, CreateRecipeData, UpdateRecipeData)
+// ... (keep all existing imports)
 import axios from 'axios';
 import api from './api';
 
@@ -56,6 +56,18 @@ export interface CreateRecipeData {
   servings: number;
   image: string;
 }
+
+// NEW: For updating a recipe, the data structure will be the same as CreateRecipeData
+export interface UpdateRecipeData {
+  name: string;
+  description: string;
+  ingredients: string[];
+  instructions: string[];
+  cookingTime: number;
+  servings: number;
+  image: string;
+}
+
 
 // Helper function to map BackendRecipe to Frontend Recipe
 const mapBackendRecipeToFrontend = (backendRecipe: BackendRecipe): Recipe => ({
@@ -129,7 +141,35 @@ export const createRecipe = async (recipeData: CreateRecipeData, authToken?: str
   }
 };
 
-// --- NEW FUNCTION FOR DELETING RECIPES ---
+// --- NEW FUNCTION FOR UPDATING RECIPES ---
+export const updateRecipe = async (
+  recipeId: string, 
+  recipeData: UpdateRecipeData, 
+  token: string
+): Promise<Recipe> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    // Ensure the recipeData matches what your backend PUT endpoint expects
+    const response = await api.put<BackendRecipe>(`/api/recipes/${recipeId}`, recipeData, config);
+    console.log(`[recipeService] Recipe ${recipeId} updated successfully.`);
+    return mapBackendRecipeToFrontend(response.data); // Map the updated backend recipe to frontend format
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error(`[recipeService] Error updating recipe ${recipeId}:`, error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || `Failed to update recipe ${recipeId}.`);
+    } else {
+      console.error('An unexpected error occurred while updating recipe:', error);
+      throw new Error('An unexpected error occurred while updating recipe.');
+    }
+  }
+};
+
+
+// --- EXISTING FUNCTION FOR DELETING RECIPES ---
 export const deleteRecipe = async (recipeId: string, token: string): Promise<void> => {
   try {
     const config = {
@@ -155,7 +195,8 @@ const recipeService = {
   getRecipes,
   getRecipeById,
   createRecipe,
-  deleteRecipe, // <--- Add to export
+  updateRecipe, // <--- ADDED to export
+  deleteRecipe,
 };
 
 export default recipeService;
