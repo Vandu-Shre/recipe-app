@@ -3,16 +3,17 @@
   "compilerOptions": {
     "target": "es2020",
     "module": "commonjs",
-    "lib": ["es2020"],
+    "lib": ["esnext"], 
     "outDir": "./dist",
-    "rootDir": "./src", // This is important: tells TS where your source files are
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true, // <--- THIS IS CRUCIAL FOR IMPORTING JSON
-    "sourceMap": true // Good for debugging,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "types": ["node"] 
   },
-  "include": ["src/**/*.ts", "src/**/*.json"], // <--- THIS IS CRUCIAL: include all TS and JSON files from src
+  "include": ["src/**/*.ts", "src/**/*.json"],
   "exclude": ["node_modules"]
 }
