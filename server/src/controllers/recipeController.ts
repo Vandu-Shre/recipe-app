@@ -66,13 +66,22 @@ export const createRecipe = async (req: Request, res: Response) => {
 // @access  Public
 export const getAllRecipes = async (req: Request, res: Response) => {
   try {
+    const { page, limit } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
     const recipes = await Recipe.find({})
       .populate('owner', 'username')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .exec();
+    const totalRecipesCount = await Recipe.countDocuments();
+    const currentCount = recipes.length;
 
     res.status(200).json({
       message: res.__('recipes_fetched_successfully'),
-      count: recipes.length,
+      count: currentCount,
+      maxPage: totalRecipesCount/currentCount,
+      currentPage: page,
       recipes,
     });
   } catch (error) {

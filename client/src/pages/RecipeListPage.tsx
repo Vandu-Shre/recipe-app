@@ -6,6 +6,8 @@ import RecipeCard from '../components/RecipeCard'; // Import the RecipeCard comp
 
 const RecipeListPage: React.FC = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [maxPage, setMaxPage] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,8 +16,10 @@ const RecipeListPage: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        const fetchedRecipes = await recipeService.getRecipes();
-        setRecipes(fetchedRecipes);
+        const { recipes, currentPage, maxPage } = await recipeService.getRecipes(1);
+        setRecipes(recipes);
+        setCurrentPage(currentPage);
+        setMaxPage(maxPage);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch recipes');
       } finally {
