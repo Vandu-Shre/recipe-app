@@ -11,7 +11,8 @@ export default {
         'off-white': '#FAFAFA',
       },
       fontFamily: {
-        lora: ['Inter', 'Lora', 'serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        pacifico: ['Pacifico', 'Lora', 'serif']
       }
     },
   },
