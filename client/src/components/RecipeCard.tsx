@@ -4,13 +4,15 @@ interface RecipeCardProps {
   id: string;
   image: string;
   title: string;
+  author: string;
   rating: number;
   time: string;
   servings: string;
   ratingCount: number;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, rating, time, servings, ratingCount }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, time, servings, ratingCount }) => {
+  console.log(title, author)
   return (
     <div className="rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer relative w-full">
       <img src={image} alt={title} className="w-full h-100 object-cover" />
@@ -18,7 +20,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, rating, time, ser
       
       <div className="absolute bottom-0 p-4 w-full text-white flex flex-col justify-end">
         <h3 className="text-2xl font-bold line-clamp-2 drop-shadow-lg">{title}</h3>
-
+       
         <div className="flex items-center text-sm pt-2 space-x-4">
           <div className="flex items-center">
             <span className="text-yellow-400 text-base">★</span>

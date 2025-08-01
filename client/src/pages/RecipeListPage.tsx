@@ -55,6 +55,7 @@ const RecipeListPage: React.FC = () => {
                 id={recipe.id}
                 image={recipe.image}
                 title={recipe.title}
+                author={recipe.author}
                 rating={recipe.rating}
                 time={recipe.time}
                 servings={recipe.servings}

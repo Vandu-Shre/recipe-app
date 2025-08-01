@@ -1,8 +1,8 @@
-// client/src/pages/AuthPage.tsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import HomePageImage from '../assets/HomePage.jpg';
 
 interface LoginFormInput {
   email: string;
@@ -44,8 +44,7 @@ const AuthPage: React.FC = () => {
 
   if (isLoading && !user) {
     return (
-      // REMOVED: bg-gray-50 from here. The body background will now show during loading.
-      <div className="flex items-center justify-center min-h-screen text-gray-700 text-xl">
+      <div className="flex items-center justify-center min-h-screen text-gray-700 text-xl font-[Poppins]">
         Loading authentication...
       </div>
     );
@@ -56,33 +55,39 @@ const AuthPage: React.FC = () => {
   }
 
   return (
-    <div
-      className="flex items-center justify-center min-h-screen p-4"
-      // Background style is now handled globally in index.css
-    >
-      <div className="bg-gray-200 p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-          {isLogin ? 'Login' : 'Register'}
-        </h2>
-
-        {/* Passing the new button colors to AuthForm */}
-        <AuthForm
-          isRegister={!isLogin}
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          buttonBgColor="bg-amber-800"         // NEW PROP: Pass background color
-          buttonHoverColor="hover:bg-amber-900" // NEW PROP: Pass hover color
+    <div className="flex h-screen font-[Poppins]">
+      <div className="hidden md:block w-2/3 relative h-full">
+        <img
+          src={HomePageImage}
+          alt="Various dishes on a table"
+          className="object-cover w-full h-full"
         />
+      </div>
 
-        <p className="text-center text-gray-600 text-sm mt-6">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-          <button
-            onClick={toggleForm}
-            className="text-amber-700 hover:text-amber-800 font-medium focus:outline-none" 
-          >
-            {isLogin ? 'Register' : 'Login'}
-          </button>
-        </p>
+      <div className="w-full md:w-1/3 flex items-center justify-center bg-white p-4 h-full overflow-y-auto">
+        <div className="bg-white p-8 rounded-lg w-full max-w-sm mx-auto">
+          <h2 className="text-3xl font-bold text-gray-600 mb-10 text-left whitespace-nowrap">
+            {isLogin ? 'Login' : 'Register'}
+          </h2>
+
+          <AuthForm
+            isRegister={!isLogin}
+            onSubmit={handleSubmit}
+            isLoading={isLoading}
+            buttonBgColor="bg-orange-400"
+            buttonHoverColor="hover:bg-orange-500"
+          />
+
+          <p className="text-center text-gray-600 text-sm mt-10">
+            {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
+            <button
+              onClick={toggleForm}
+              className="text-orange-400 hover:text-orange-500 font-medium focus:outline-none"
+            >
+              {isLogin ? 'Register' : 'Login'}
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
