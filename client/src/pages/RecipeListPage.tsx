@@ -1,29 +1,10 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import recipeService, { type Recipe } from '../services/recipeService';
+import recipeService from '../services/recipeService';
+import type { IFrontendRecipe } from '../interfaces/recipe';
 import RecipeCard from '../components/RecipeCard';
-import BreakfastCategory from '../assets/categories/BreakfastCategory.jpeg';
-import SoupCategory from '../assets/categories/SoupCategory.jpeg';
-import ChineseCategory from '../assets/categories/ChineseCategory.jpeg';
-import IndianCategory from '../assets/categories/IndianCategory.jpeg';
-import ItalianCategory from '../assets/categories/ItalianCategory.jpeg';
-import MexicanCategory from '../assets/categories/MexicanCategory.jpeg';
-import PizzaCategory from '../assets/categories/PizzaCategory.jpeg';
-import DessertCategory from '../assets/categories/DessertCategory.jpeg';
-import BeveragesCategory from '../assets/categories/BeveragesCategory.jpeg';
+import { categories } from '../data/categories';
 import { MagnifyingGlassIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
-
-const categories = [
-  { name: 'Breakfast', image: BreakfastCategory },
-  { name: 'Soup', image: SoupCategory },
-  { name: 'Indian', image: IndianCategory },
-  { name: 'Chinese', image: ChineseCategory },
-  { name: 'Italian', image: ItalianCategory },
-  { name: 'Mexican', image: MexicanCategory },
-  { name: 'Pizza', image: PizzaCategory },
-  { name: 'Dessert', image: DessertCategory },
-  { name: 'Beverages', image: BeveragesCategory },
-];
 
 const sortOptions = [
   { value: 'newest', label: 'Newest' },
@@ -33,7 +14,7 @@ const sortOptions = [
 ];
 
 const RecipeListPage: React.FC = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<IFrontendRecipe[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -150,7 +131,6 @@ const RecipeListPage: React.FC = () => {
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-full h-full object-cover"
                   />
                 </div>
               </button>

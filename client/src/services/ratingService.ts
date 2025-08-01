@@ -1,81 +1,34 @@
-// client/src/services/ratingService.ts
 import axios from 'axios';
 import api from './api';
+import type { IBackendRating, IRating, ICreateRatingData, IUpdateRatingData } from '../interfaces/rating';
 
-// Interface for the rating data coming from the backend
-export interface BackendRating {
-  _id: string;
-  recipe: string; 
-  user?: { 
-    _id?: string; 
-    username?: string; 
-  };
-  rating: number;
-  comment: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// Interface for the frontend-ready Rating object
-export interface Rating {
-  id: string;
-  recipeId: string;
-  user: {
-    id: string;
-    username: string;
-  };
-  value: number; // Mapped from backend's 'rating'
-  comment: string;
-  createdAt: string;
-}
-
-// Interface for creating a new rating
-export interface CreateRatingData {
-  recipe: string; // recipe ID
-  rating: number;
-  comment: string;
-}
-
-// Interface for updating an existing rating
-export interface UpdateRatingData {
-  rating?: number;
-  comment?: string;
-}
-
-// Helper to map backend rating to frontend rating
-const mapBackendRatingToFrontend = (backendRating: BackendRating): Rating => ({
+const mapBackendRatingToFrontend = (backendRating: IBackendRating): IRating => ({
   id: backendRating._id,
   recipeId: backendRating.recipe,
-  // Add defensive checks for 'owner' and its properties
   user: {
-    id: backendRating.user?._id || 'unknown', // Use optional chaining and fallback
-    username: backendRating.user?.username || 'Unknown User', // Use optional chaining and fallback
+    _id: backendRating.user?._id || 'unknown',
+    username: backendRating.user?.username || 'Unknown User',
   },
   value: backendRating.rating,
   comment: backendRating.comment,
-  createdAt: new Date(backendRating.createdAt).toLocaleDateString() // Format date for display
+  createdAt: new Date(backendRating.createdAt).toLocaleDateString()
 });
 
-// API calls for ratings
 const ratingService = {
-  // Get all ratings for a specific recipe
-  getRatingsForRecipe: async (recipeId: string): Promise<Rating[]> => {
+  getRatingsForRecipe: async (recipeId: string): Promise<IRating[]> => {
     try {
-      const response = await api.get<{ message: string; ratings: BackendRating[] }>(`/api/ratings/${recipeId}`);
+      const response = await api.get<{ message: string; ratings: IBackendRating[] }>(`/api/ratings/${recipeId}`);
       return response.data.ratings.map(mapBackendRatingToFrontend);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error(`Error fetching ratings for recipe ${recipeId}:`, error.response?.data || error.message);
         throw new Error(error.response?.data?.message || `Failed to fetch ratings for recipe ${recipeId}`);
       } else {
-        console.error('An unexpected error occurred:', error);
         throw new Error('An unexpected error occurred while fetching ratings.');
       }
     }
   },
 
-  // Create a new rating
-  createRating: async (data: CreateRatingData, token: string): Promise<Rating> => {
+  createRating: async (data: ICreateRatingData, token: string): Promise<IRating> => {
     try {
       const config = {
         headers: {
@@ -83,22 +36,18 @@ const ratingService = {
           'Content-Type': 'application/json',
         },
       };
-      const response = await api.post<{ message: string; rating: BackendRating }>('/api/ratings', data, config);
-      // This is line 86, which calls mapBackendRatingToFrontend
-      return mapBackendRatingToFrontend(response.data.rating); 
+      const response = await api.post<{ message: string; rating: IBackendRating }>('/api/ratings', data, config);
+      return mapBackendRatingToFrontend(response.data.rating);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error('Error creating rating:', error.response?.data || error.message);
         throw new Error(error.response?.data?.message || 'Failed to create rating.');
       } else {
-        console.error('An unexpected error occurred:', error);
         throw new Error('An unexpected error occurred while creating rating.');
       }
     }
   },
 
-  // Update an existing rating
-  updateRating: async (ratingId: string, data: UpdateRatingData, token: string): Promise<Rating> => {
+  updateRating: async (ratingId: string, data: IUpdateRatingData, token: string): Promise<IRating> => {
     try {
       const config = {
         headers: {
@@ -106,20 +55,17 @@ const ratingService = {
           'Content-Type': 'application/json',
         },
       };
-      const response = await api.put<{ message: string; rating: BackendRating }>(`/api/ratings/${ratingId}`, data, config);
+      const response = await api.put<{ message: string; rating: IBackendRating }>(`/api/ratings/${ratingId}`, data, config);
       return mapBackendRatingToFrontend(response.data.rating);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error(`Error updating rating ${ratingId}:`, error.response?.data || error.message);
         throw new Error(error.response?.data?.message || `Failed to update rating ${ratingId}.`);
       } else {
-        console.error('An unexpected error occurred:', error);
         throw new Error('An unexpected error occurred while updating rating.');
       }
     }
   },
 
-  // Delete a rating
   deleteRating: async (ratingId: string, token: string): Promise<void> => {
     try {
       const config = {
@@ -130,10 +76,8 @@ const ratingService = {
       await api.delete(`/api/ratings/${ratingId}`, config);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        console.error(`Error deleting rating ${ratingId}:`, error.response?.data || error.message);
         throw new Error(error.response?.data?.message || `Failed to delete rating ${ratingId}.`);
       } else {
-        console.error('An unexpected error occurred:', error);
         throw new Error('An unexpected error occurred while deleting rating.');
       }
     }

@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import AuthForm from '../components/AuthForm';
 import { useAuth } from '../context/AuthContext';
 import LoginPageImg from '../assets/LoginPage.jpg';
-
-interface LoginFormInput {
-  email: string;
-  password: string;
-}
-
-interface RegisterFormInput extends LoginFormInput {
-  username: string;
-}
+import type { LoginFormInput, RegisterFormInput } from '../interfaces/auth'; 
 
 type AuthFormData = LoginFormInput | RegisterFormInput;
+
+const LoadingMessage: React.FC<{ message: string }> = ({ message }) => (
+  <div className="flex items-center justify-center min-h-screen text-gray-700 text-xl font-[Poppins] bg-neutral-50">
+    <div className="flex flex-col items-center p-8 bg-white rounded-xl shadow-lg max-w-sm">
+      <div className="w-12 h-12 border-4 border-t-4 border-gray-200 border-t-orange-500 rounded-full animate-spin mb-4"></div>
+      <p className="text-gray-600 text-lg font-medium">{message}</p>
+    </div>
+  </div>
+);
 
 const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -33,25 +35,27 @@ const AuthPage: React.FC = () => {
   const handleSubmit = async (formData: AuthFormData) => {
     try {
       if (isLogin) {
-        await login(formData.email, formData.password);
+        const { email, password } = formData as LoginFormInput;
+        await login(email, password);
       } else {
-        await register((formData as RegisterFormInput).username, formData.email, formData.password);
+        const { username, email, password } = formData as RegisterFormInput;
+        await register(username, email, password);
       }
-    } catch (error: any) {
-      alert(error.response?.data?.message || error.message || 'Authentication failed. Please try again.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data?.message || 'Authentication failed. Please try again.');
+      } else {
+        alert('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
   if (isLoading && !user) {
-    return (
-      <div className="flex items-center justify-center min-h-screen text-gray-700 text-xl font-[Poppins]">
-        Loading authentication...
-      </div>
-    );
+    return <LoadingMessage message="Authenticating..." />;
   }
 
   if (user) {
-     return null;
+    return <LoadingMessage message="You are already logged in. Redirecting..." />;
   }
 
   return (

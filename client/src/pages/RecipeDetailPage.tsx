@@ -1,11 +1,13 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import recipeService, { type Recipe } from '../services/recipeService';
-import ratingService, { type Rating, type CreateRatingData, type UpdateRatingData } from '../services/ratingService';
+import recipeService from '../services/recipeService';
+import ratingService from '../services/ratingService';
+import type { IFrontendRecipe } from '../interfaces/recipe';
+import type { IRating, ICreateRatingData, IUpdateRatingData } from '../interfaces/rating';
 import { useAuth } from '../context/AuthContext';
 import StarRating from '../components/StarRating';
-
+import '../styles/RecipeDetailPage.css';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 const RecipeDetailPage: React.FC = () => {
@@ -13,11 +15,11 @@ const RecipeDetailPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, authToken } = useAuth();
 
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [recipe, setRecipe] = useState<IFrontendRecipe | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   
-  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [ratings, setRatings] = useState<IRating[]>([]);
   const [ratingsLoading, setRatingsLoading] = useState<boolean>(true);
   const [ratingsError, setRatingsError] = useState<string | null>(null);
 
@@ -96,7 +98,7 @@ const RecipeDetailPage: React.FC = () => {
     setIsSubmittingRating(true);
     setSubmitRatingError(null);
 
-    const ratingData: CreateRatingData = {
+    const ratingData: ICreateRatingData = {
       recipe: id,
       rating: newRatingValue,
       comment: newComment,
@@ -112,14 +114,18 @@ const RecipeDetailPage: React.FC = () => {
         setRecipe(updatedRecipe);
       }
 
-    } catch (err: any) {
-      setSubmitRatingError(err.message || "Failed to submit rating.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setSubmitRatingError(err.response?.data?.message || "Failed to submit rating.");
+      } else {
+        setSubmitRatingError("Failed to submit rating.");
+      }
     } finally {
       setIsSubmittingRating(false);
     }
   };
 
-  const handleEditClick = (ratingToEdit: Rating) => {
+  const handleEditClick = (ratingToEdit: IRating) => {
     setEditingRatingId(ratingToEdit.id);
     setEditingRatingValue(ratingToEdit.value);
     setEditingComment(ratingToEdit.comment);
@@ -146,7 +152,7 @@ const RecipeDetailPage: React.FC = () => {
     setIsUpdatingRating(true);
     setUpdateRatingError(null);
 
-    const updateData: UpdateRatingData = {
+    const updateData: IUpdateRatingData = {
       rating: editingRatingValue,
       comment: editingComment,
     };
@@ -161,8 +167,12 @@ const RecipeDetailPage: React.FC = () => {
         const updatedRecipe = await recipeService.getRecipeById(recipe.id);
         setRecipe(updatedRecipe);
       }
-    } catch (err: any) {
-      setUpdateRatingError(err.message || "Failed to update rating.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setUpdateRatingError(err.response?.data?.message || "Failed to update rating.");
+      } else {
+        setUpdateRatingError("Failed to update rating.");
+      }
     } finally {
       setIsUpdatingRating(false);
     }
@@ -185,8 +195,12 @@ const RecipeDetailPage: React.FC = () => {
         setRecipe(updatedRecipe);
       }
       alert("Rating deleted successfully!");
-    } catch (err: any) {
-      alert(err.message || "Failed to delete rating.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Failed to delete rating.");
+      } else {
+        alert("Failed to delete rating.");
+      }
     }
   };
 
@@ -204,8 +218,12 @@ const RecipeDetailPage: React.FC = () => {
       await recipeService.deleteRecipe(id, authToken);
       alert("Recipe deleted successfully!");
       navigate('/');
-    } catch (err: any) {
-      alert(err.message || "Failed to delete recipe.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        alert(err.response?.data?.message || "Failed to delete recipe.");
+      } else {
+        alert("Failed to delete recipe.");
+      }
     }
   };
 
@@ -440,7 +458,7 @@ const RecipeDetailPage: React.FC = () => {
                       <span className="text-gray-500 text-sm ml-auto">{rating.createdAt}</span>
                     </div>
                     <p className="text-gray-600 mb-5">{rating.comment}</p>
-                    {user && rating.user.id === user.id && (
+                    {user && rating.user._id === user.id && (
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleEditClick(rating)}

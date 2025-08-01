@@ -1,16 +1,15 @@
-// client/src/pages/ProfilePage.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import recipeService, { type Recipe } from '../services/recipeService';
-
+import recipeService from '../services/recipeService';
+import type { IFrontendRecipe } from '../interfaces/recipe';
 import RecipeCard from '../components/RecipeCard';
 
 const ProfilePage: React.FC = () => {
   const { user, authToken, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [userRecipes, setUserRecipes] = useState<Recipe[]>([]);
+  const [userRecipes, setUserRecipes] = useState<IFrontendRecipe[]>([]);
   const [recipesLoading, setRecipesLoading] = useState<boolean>(true);
   const [recipesError, setRecipesError] = useState<string | null>(null);
 
@@ -25,11 +24,8 @@ const ProfilePage: React.FC = () => {
         setRecipesLoading(true);
         setRecipesError(null);
         try {
-          const fetchedRecipes = await recipeService.getRecipes(); // Fetches all recipes
-          // Client-side filter: Compare recipe.author (username) with logged-in user.username
-          // This assumes recipe.author stores the username string.
-          const filteredRecipes = fetchedRecipes.filter(recipe => recipe.author === user.username);
-          setUserRecipes(filteredRecipes);
+          const fetchedRecipes = await recipeService.getRecipes(undefined, undefined, user.id);
+          setUserRecipes(fetchedRecipes);
         } catch (err: any) {
           setRecipesError(err.message || 'Failed to fetch your recipes.');
         } finally {
@@ -62,18 +58,29 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full px-4 py-8 min-h-screen">
-      <div className="max-w-5xl mx-auto">
+    <div className="w-full px-4 py-8 min-h-screen font-[Poppins] bg-neutral-50">
+      <div className="max-w-5xl mx-auto py-8 px-6 bg-white rounded-xl shadow-lg">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-orange-500 mb-2">
+          Hello, {user.username}!
+        </h1>
+        <p className="text-gray-600 text-lg sm:text-xl font-thin mb-8">
+          Welcome to your personal recipe hub.
+        </p>
+
+        <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 border-b-2 border-orange-400 pb-2 mb-6">
+          Your Recipes
+        </h2>
+        
         {recipesLoading ? (
-          <div className="text-center text-gray-300 text-xl">Loading your recipes...</div>
+          <div className="text-center text-gray-400 text-xl py-12">Loading your recipes...</div>
         ) : recipesError ? (
-          <div className="text-center text-red-500 text-xl">Error: {recipesError}</div>
+          <div className="text-center text-red-500 text-xl py-12">Error: {recipesError}</div>
         ) : userRecipes.length === 0 ? (
-          <div className="text-center text-gray-300 text-xl">
+          <div className="text-center text-gray-500 text-xl py-12">
             You haven't created any recipes yet. <Link to="/add-recipe" className="text-amber-500 hover:underline">Add your first one!</Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8"> {/* <--- MODIFIED THIS LINE */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {userRecipes.map((recipe) => (
               <Link to={`/recipes/${recipe.id}`} key={recipe.id} className="block">
                 <RecipeCard

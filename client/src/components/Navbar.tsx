@@ -44,7 +44,6 @@ const Navbar: React.FC = () => {
         <div className="flex-shrink-0">
           <Logo />
         </div>
-
         {isLoading ? (
           <div className="text-gray-400">Loading authentication...</div>
         ) : (
@@ -57,12 +56,6 @@ const Navbar: React.FC = () => {
                 >
                   Home
                 </NavLink>
-                {/* <NavLink
-                  to="/categories"
-                  className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
-                >
-                  Categories
-                </NavLink> */}
                 <NavLink
                   to="/recipes"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
@@ -70,10 +63,22 @@ const Navbar: React.FC = () => {
                   Recipes
                 </NavLink>
                 <NavLink
+                  to="/meal-planner"
+                  className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
+                >
+                  Meal Planner
+                </NavLink>
+                <NavLink
+                  to="/pantry-search"
+                  className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
+                >
+                  Pantry Search
+                </NavLink>
+                <NavLink
                   to="/add-recipe"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
                 >
-                  Add Yours
+                  Contribute
                 </NavLink>
               </div>
             </div>

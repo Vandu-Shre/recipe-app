@@ -1,71 +1,8 @@
 import axios from 'axios';
 import api from './api';
+import type { IBackendRecipe, IFrontendRecipe, ICreateRecipeData, IUpdateRecipeData } from '../interfaces/recipe';
 
-interface BackendRecipe {
-  _id: string;
-  name: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-  image: string;
-  owner?: {
-    _id: string;
-    username: string;
-  };
-  averageRating: number;
-  ratingCount: number;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  category: string;
-}
-
-interface SingleRecipeApiResponse {
-  message: string;
-  recipe: BackendRecipe;
-}
-
-export interface Recipe {
-  id: string;
-  image: string;
-  title: string;
-  author: string;
-  authorId: string;
-  rating: number;
-  time: string;
-  servings: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
-  ratingCount: number;
-  category: string;
-}
-
-export interface CreateRecipeData {
-  name: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-  image: string;
-  category: string;
-}
-
-export interface UpdateRecipeData {
-  name: string;
-  description: string;
-  ingredients: string[];
-  instructions: string[];
-  cookingTime: number;
-  servings: number;
-  image: string;
-  category: string;
-}
-
-const mapBackendRecipeToFrontend = (backendRecipe: BackendRecipe): Recipe => ({
+const mapBackendRecipeToFrontend = (backendRecipe: IBackendRecipe): IFrontendRecipe => ({
   id: backendRecipe._id,
   image: backendRecipe.image,
   title: backendRecipe.name,
@@ -79,18 +16,22 @@ const mapBackendRecipeToFrontend = (backendRecipe: BackendRecipe): Recipe => ({
   instructions: backendRecipe.instructions,
   ratingCount: backendRecipe.ratingCount,
   category: backendRecipe.category,
+  createdAt: backendRecipe.createdAt,
 });
 
-export const getRecipes = async (category?: string, searchTerm?: string): Promise<Recipe[]> => {
+export const getRecipes = async (category?: string, searchTerm?: string, authorId?: string): Promise<IFrontendRecipe[]> => {
   try {
-    const params: { category?: string; search?: string } = {};
+    const params: { category?: string; search?: string; authorId?: string } = {};
     if (category) {
       params.category = category;
     }
     if (searchTerm) {
       params.search = searchTerm;
     }
-    const response = await api.get<{ message: string; count: number; recipes: BackendRecipe[] }>('/api/recipes', { params });
+    if (authorId) {
+      params.authorId = authorId;
+    }
+    const response = await api.get<{ message: string; count: number; recipes: IBackendRecipe[] }>('/api/recipes', { params });
     return response.data.recipes.map(mapBackendRecipeToFrontend);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -101,9 +42,9 @@ export const getRecipes = async (category?: string, searchTerm?: string): Promis
   }
 };
 
-export const getRecipeById = async (id: string): Promise<Recipe> => {
+export const getRecipeById = async (id: string): Promise<IFrontendRecipe> => {
   try {
-    const response = await api.get<SingleRecipeApiResponse>(`/api/recipes/${id}`);
+    const response = await api.get<{ message: string; recipe: IBackendRecipe }>(`/api/recipes/${id}`);
     const mappedRecipe = mapBackendRecipeToFrontend(response.data.recipe);
     return mappedRecipe;
   } catch (error: unknown) {
@@ -115,7 +56,7 @@ export const getRecipeById = async (id: string): Promise<Recipe> => {
   }
 };
 
-export const createRecipe = async (recipeData: CreateRecipeData, authToken?: string): Promise<Recipe> => {
+export const createRecipe = async (recipeData: ICreateRecipeData, authToken?: string): Promise<IFrontendRecipe> => {
   try {
     const config = authToken ? {
       headers: {
@@ -123,7 +64,7 @@ export const createRecipe = async (recipeData: CreateRecipeData, authToken?: str
       }
     } : {};
 
-    const response = await api.post<BackendRecipe>('/api/recipes', recipeData, config);
+    const response = await api.post<IBackendRecipe>('/api/recipes', recipeData, config);
     return mapBackendRecipeToFrontend(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -136,16 +77,16 @@ export const createRecipe = async (recipeData: CreateRecipeData, authToken?: str
 
 export const updateRecipe = async (
   recipeId: string, 
-  recipeData: UpdateRecipeData, 
+  recipeData: IUpdateRecipeData, 
   token: string
-): Promise<Recipe> => {
+): Promise<IFrontendRecipe> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
-    const response = await api.put<BackendRecipe>(`/api/recipes/${recipeId}`, recipeData, config);
+    const response = await api.put<IBackendRecipe>(`/api/recipes/${recipeId}`, recipeData, config);
     return mapBackendRecipeToFrontend(response.data);
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
