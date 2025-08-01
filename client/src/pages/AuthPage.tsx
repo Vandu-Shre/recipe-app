@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from '../components/AuthForm';
 import { useAuth } from '../context/AuthContext';
-import HomePageImage from '../assets/HomePage.jpg';
+import LoginPageImg from '../assets/LoginPage.jpg';
 
 interface LoginFormInput {
   email: string;
@@ -58,7 +58,7 @@ const AuthPage: React.FC = () => {
     <div className="flex h-screen font-[Poppins]">
       <div className="hidden md:block w-2/3 relative h-full">
         <img
-          src={HomePageImage}
+          src={LoginPageImg}
           alt="Various dishes on a table"
           className="object-cover w-full h-full"
         />

@@ -50,12 +50,12 @@ const Navbar: React.FC = () => {
         ) : (
           <>
             <div className="flex-grow flex justify-center">
-              <div className="flex space-x-10 text-gray-400 font-medium text-lg">
+              <div className="flex space-x-15 text-gray-400 font-medium text-lg">
                 <NavLink
-                  to="/recipes"
+                  to="/"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
                 >
-                  Recipes
+                  Home
                 </NavLink>
                 <NavLink
                   to="/categories"
@@ -64,16 +64,16 @@ const Navbar: React.FC = () => {
                   Categories
                 </NavLink>
                 <NavLink
-                  to="/popular"
+                  to="/recipes"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
                 >
-                  Popular Recipes
+                  Recipes
                 </NavLink>
                 <NavLink
                   to="/add-recipe"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
                 >
-                  Add Recipe
+                  Add Yours
                 </NavLink>
               </div>
             </div>
