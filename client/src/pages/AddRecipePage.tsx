@@ -1,4 +1,3 @@
-// client/src/pages/AddRecipePage.tsx
 import React, { useState } from 'react';
 import recipeService, { type CreateRecipeData } from '../services/recipeService';
 import { useAuth } from '../context/AuthContext';
@@ -23,7 +22,6 @@ const AddRecipePage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    // Special handling for number inputs to ensure they are parsed as numbers
     if (name === "cookingTime" || name === "servings") {
       setFormData((prev) => ({ ...prev, [name]: Number(value) }));
     } else {
@@ -56,7 +54,6 @@ const AddRecipePage: React.FC = () => {
     setError(null);
     setSuccess(null);
 
-    // Filter out empty strings from ingredients/instructions before sending
     const cleanedFormData = {
       ...formData,
       ingredients: formData.ingredients.filter(item => item.trim() !== ''),
@@ -66,10 +63,10 @@ const AddRecipePage: React.FC = () => {
     try {
       await recipeService.createRecipe(cleanedFormData, authToken);
       setSuccess('Recipe added successfully!');
-      setFormData({ // Reset form
+      setFormData({
         name: '', description: '', ingredients: [''], instructions: [''], cookingTime: 0, servings: 0, image: '',
       });
-      navigate('/recipes'); // Navigate to the recipe list after adding
+      navigate('/recipes');
     } catch (err: any) {
       setError(err.message || 'Failed to add recipe.');
     } finally {
@@ -87,11 +84,11 @@ const AddRecipePage: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen py-8 flex flex-col items-center justify-center text-red-500 text-xl">
+      <div className="min-h-screen py-8 flex flex-col items-center justify-center text-red-500 text-xl font-[Poppins]">
         <p>You must be logged in to add a recipe.</p>
         <button
           onClick={() => navigate('/auth')}
-          className="mt-4 py-2 px-6 bg-amber-800 hover:bg-amber-900 text-white rounded-md transition duration-300"
+          className="mt-4 py-2 px-6 bg-orange-800 hover:bg-orange-900 text-white rounded-md transition duration-300"
         >
           Login / Register
         </button>
@@ -100,11 +97,10 @@ const AddRecipePage: React.FC = () => {
   }
 
   return (
-    // Adjust container for consistency with other pages' backgrounds
-    <div className="w-full px-4 py-8 min-h-screen"> 
-      <div className="max-w-2xl mx-auto"> {/* Inner container for centering content */}
-        <h1 className="text-4xl font-extrabold text-white text-center mb-8">Add New Recipe</h1>
-        <form onSubmit={handleSubmit} className="bg-gray-200 p-8 rounded-lg shadow-xl space-y-6">
+    <div className="w-full bg-neutral-100 p-10 min-h-screen font-[Poppins]"> 
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-2xl font-bold text-gray-600 text-center mb-8">Add New Recipe</h1>
+        <form onSubmit={handleSubmit} className="bg-white p-10 rounded-lg shadow-xl space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Recipe Name</label>
             <input
@@ -114,8 +110,7 @@ const AddRecipePage: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              // ADDED: text-gray-800 and placeholder-gray-500
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
               placeholder="e.g., Spicy Chicken Curry"
             />
           </div>
@@ -129,8 +124,7 @@ const AddRecipePage: React.FC = () => {
               value={formData.image}
               onChange={handleChange}
               required
-              // ADDED: text-gray-800 and placeholder-gray-500
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
               placeholder="http://example.com/image.jpg"
             />
           </div>
@@ -144,13 +138,11 @@ const AddRecipePage: React.FC = () => {
               onChange={handleChange}
               rows={3}
               required
-              // ADDED: text-gray-800 and placeholder-gray-500
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
               placeholder="A delicious and easy-to-make chicken curry..."
             ></textarea>
           </div>
 
-          {/* Ingredients */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Ingredients</label>
             {formData.ingredients.map((ingredient, index) => (
@@ -160,8 +152,7 @@ const AddRecipePage: React.FC = () => {
                   value={ingredient}
                   onChange={(e) => handleArrayChange(e, index, 'ingredients')}
                   placeholder={`Ingredient ${index + 1}`}
-                  // ADDED: text-gray-800 and placeholder-gray-500
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
                 />
                 {formData.ingredients.length > 1 && (
                   <button
@@ -179,13 +170,12 @@ const AddRecipePage: React.FC = () => {
             <button
               type="button"
               onClick={() => addArrayItem('ingredients')}
-              className="mt-2 text-sm text-amber-600 hover:text-amber-800 font-medium"
+              className="mt-2 text-sm text-orange-600 hover:text-orange-800 font-medium"
             >
               + Add Ingredient
             </button>
           </div>
 
-          {/* Instructions */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
             {formData.instructions.map((instruction, index) => (
@@ -195,8 +185,7 @@ const AddRecipePage: React.FC = () => {
                   onChange={(e) => handleArrayChange(e, index, 'instructions')}
                   placeholder={`Step ${index + 1}`}
                   rows={2}
-                  // ADDED: text-gray-800 and placeholder-gray-500
-                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+                  className="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
                 ></textarea>
                 {formData.instructions.length > 1 && (
                   <button
@@ -214,7 +203,7 @@ const AddRecipePage: React.FC = () => {
             <button
               type="button"
               onClick={() => addArrayItem('instructions')}
-              className="mt-2 text-sm text-amber-600 hover:text-amber-800 font-medium"
+              className="mt-2 text-sm text-orange-600 hover:text-orange-800 font-medium"
             >
               + Add Step
             </button>
@@ -227,12 +216,11 @@ const AddRecipePage: React.FC = () => {
                 type="number"
                 id="cookingTime"
                 name="cookingTime"
-                value={formData.cookingTime === 0 ? '' : formData.cookingTime} // Show empty string if 0, else show value
+                value={formData.cookingTime === 0 ? '' : formData.cookingTime}
                 onChange={handleChange}
                 required
                 min="0"
-                // ADDED: text-gray-800 and placeholder-gray-500
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
                 placeholder="e.g., 30"
               />
             </div>
@@ -242,12 +230,11 @@ const AddRecipePage: React.FC = () => {
                 type="number"
                 id="servings"
                 name="servings"
-                value={formData.servings === 0 ? '' : formData.servings} // Show empty string if 0, else show value
+                value={formData.servings === 0 ? '' : formData.servings}
                 onChange={handleChange}
                 required
                 min="1"
-                // ADDED: text-gray-800 and placeholder-gray-500
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-gray-800 placeholder-gray-500"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
                 placeholder="e.g., 4"
               />
             </div>
@@ -259,8 +246,8 @@ const AddRecipePage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 px-6 rounded-md text-white font-semibold transition duration-300 ${
-              loading ? 'bg-amber-600 opacity-70 cursor-not-allowed' : 'bg-amber-800 hover:bg-amber-900'
+            className={`w-full mt-10 py-3 px-6 rounded-full text-white font-semibold transition duration-300 ${
+              loading ? 'bg-orange-500 opacity-70 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-500'
             }`}
           >
             {loading ? 'Adding Recipe...' : 'Add Recipe'}
