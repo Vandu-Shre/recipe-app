@@ -1,22 +1,22 @@
-// server/src/models/Recipe.ts
 import { Schema, model, Document, Types, PopulatedDoc } from 'mongoose';
 import { IUser } from './User';
 import { IRating } from './Rating';
 
-// Define the interface for a Recipe document
+export const recipeCategories = ['Breakfast', 'Soup', 'Indian', 'Chinese', 'Italian', 'Mexican', 'Pizza', 'Dessert', 'Beverages'];
+
 export interface IRecipe extends Document {
-  //user: Types.ObjectId | PopulatedDoc<IUser>;
   name: string;
   description: string;
-  ingredients: string[]; // Array of strings, e.g., ["1 cup flour", "2 eggs"]
-  instructions: string[]; // Array of strings, e.g., ["Mix ingredients", "Bake at 350F"]
-  cookingTime: number; // In minutes
+  ingredients: string[];
+  instructions: string[];
+  cookingTime: number;
   servings: number;
-  image: string; // URL to an image (optional)
-  owner: Types.ObjectId | PopulatedDoc<IUser>; // Reference to the User who created the recipe
+  image: string;
+  category: string;
+  owner: Types.ObjectId | PopulatedDoc<IUser>;
   ratings: Types.ObjectId[] | IRating[];
-  averageRating: number; // Will store the calculated average rating
-  ratingCount: number; // Number of ratings received
+  averageRating: number;
+  ratingCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,7 +35,7 @@ const RecipeSchema = new Schema<IRecipe>({
     minlength: [10, 'Description must be at least 10 characters long'],
   },
   ingredients: {
-    type: [String], // Array of strings
+    type: [String],
     required: [true, 'Ingredients are required'],
     validate: {
       validator: (v: string[]) => Array.isArray(v) && v.length > 0,
@@ -43,7 +43,7 @@ const RecipeSchema = new Schema<IRecipe>({
     },
   },
   instructions: {
-    type: [String], // Array of strings
+    type: [String],
     required: [true, 'Instructions are required'],
     validate: {
       validator: (v: string[]) => Array.isArray(v) && v.length > 0,
@@ -63,17 +63,22 @@ const RecipeSchema = new Schema<IRecipe>({
   image: {
     type: String,
     trim: true,
-    default: '', // Default to an empty string if no image provided
+    default: '',
+  },
+  category: {
+    type: String,
+    required: [true, 'Category is required'],
+    enum: recipeCategories,
   },
   owner: {
-    type: Schema.Types.ObjectId, // This defines a reference
-    ref: 'User', // This tells Mongoose which model the ObjectId refers to
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: [true, 'Recipe must have an owner'],
   },
   ratings: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Rating', // Reference to your Rating model
+      ref: 'Rating',
     },
   ],
   averageRating: {
@@ -97,7 +102,6 @@ const RecipeSchema = new Schema<IRecipe>({
   },
 });
 
-// Update `updatedAt` field on save
 RecipeSchema.pre<IRecipe>('save', function(next) {
   this.updatedAt = new Date();
   next();

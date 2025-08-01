@@ -7,7 +7,7 @@ import recipeService, { type Recipe } from '../services/recipeService';
 import RecipeCard from '../components/RecipeCard';
 
 const ProfilePage: React.FC = () => {
-  const { user, authToken, isLoading: authLoading, logout } = useAuth();
+  const { user, authToken, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [userRecipes, setUserRecipes] = useState<Recipe[]>([]);
@@ -41,11 +41,6 @@ const ProfilePage: React.FC = () => {
     fetchUserRecipes();
   }, [user, authToken, authLoading, navigate]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   if (authLoading || !user) {
     return (
       <div className="min-h-screen py-8 flex flex-col items-center justify-center text-white text-xl bg-black">
@@ -68,27 +63,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="w-full px-4 py-8 min-h-screen">
-      {/* Increased max-w from 4xl to 5xl to give more horizontal space */}
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-white text-center mb-8">
-          Welcome, {user.username}!
-        </h1>
-
-        <div className="bg-gray-200 p-8 rounded-lg shadow-xl mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Information</h2>
-          <p className="text-gray-700 text-lg mb-2">Email: <span className="font-semibold">{user.email}</span></p>
-          {/* Removed/Commented out 'Member Since' line as 'createdAt' property does not exist on 'User' type */}
-          {/* <p className="text-gray-700 text-lg">Member Since: <span className="font-semibold">{new Date(user.createdAt).toLocaleDateString()}</span></p> */}
-          <button
-            onClick={handleLogout}
-            className="mt-6 py-2 px-6 bg-red-600 hover:bg-red-700 text-white rounded-md transition duration-300"
-          >
-            Logout
-          </button>
-        </div>
-
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">Your Recipes</h2>
-
         {recipesLoading ? (
           <div className="text-center text-gray-300 text-xl">Loading your recipes...</div>
         ) : recipesError ? (

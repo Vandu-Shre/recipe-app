@@ -57,12 +57,12 @@ const Navbar: React.FC = () => {
                 >
                   Home
                 </NavLink>
-                <NavLink
+                {/* <NavLink
                   to="/categories"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}
                 >
                   Categories
-                </NavLink>
+                </NavLink> */}
                 <NavLink
                   to="/recipes"
                   className={({ isActive }) => (isActive ? 'text-amber-500 font-semibold' : 'hover:text-amber-500') + ' transition duration-200'}

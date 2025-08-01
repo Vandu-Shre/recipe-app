@@ -3,11 +3,27 @@ import recipeService, { type CreateRecipeData } from '../services/recipeService'
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+const categories = [
+  'Breakfast',
+  'Soup',
+  'Indian',
+  'Chinese',
+  'Italian',
+  'Mexican',
+  'Pizza',
+  'Dessert',
+  'Beverages',
+];
+
+interface UpdatedCreateRecipeData extends CreateRecipeData {
+  category: string;
+}
+
 const AddRecipePage: React.FC = () => {
   const { authToken, user, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState<CreateRecipeData>({
+  const [formData, setFormData] = useState<UpdatedCreateRecipeData>({
     name: '',
     description: '',
     ingredients: [''],
@@ -15,12 +31,13 @@ const AddRecipePage: React.FC = () => {
     cookingTime: 0,
     servings: 0,
     image: '',
+    category: '', 
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     if (name === "cookingTime" || name === "servings") {
       setFormData((prev) => ({ ...prev, [name]: Number(value) }));
@@ -50,6 +67,10 @@ const AddRecipePage: React.FC = () => {
       setError('You must be logged in to add a recipe.');
       return;
     }
+    if (!formData.category) {
+      setError('Please select a category.');
+      return;
+    }
     setLoading(true);
     setError(null);
     setSuccess(null);
@@ -64,7 +85,7 @@ const AddRecipePage: React.FC = () => {
       await recipeService.createRecipe(cleanedFormData, authToken);
       setSuccess('Recipe added successfully!');
       setFormData({
-        name: '', description: '', ingredients: [''], instructions: [''], cookingTime: 0, servings: 0, image: '',
+        name: '', description: '', ingredients: [''], instructions: [''], cookingTime: 0, servings: 0, image: '', category: '',
       });
       navigate('/recipes');
     } catch (err: any) {
@@ -97,9 +118,9 @@ const AddRecipePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full bg-neutral-100 p-10 min-h-screen font-[Poppins]"> 
+    <div className="w-full p-10 min-h-screen font-[Poppins]">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-600 text-center mb-8">Add New Recipe</h1>
+        <h1 className="text-xl font-bold text-orange-400 text-center mb-8">Add New Recipe</h1>
         <form onSubmit={handleSubmit} className="bg-white p-10 rounded-lg shadow-xl space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Recipe Name</label>
@@ -113,6 +134,23 @@ const AddRecipePage: React.FC = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 placeholder-gray-500"
               placeholder="e.g., Spicy Chicken Curry"
             />
+          </div>
+
+          <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+              <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                  className="mt-1 block w-full h-8 rounded-md py-3 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500 text-gray-800 bg-white"
+              >
+                  <option value="" disabled>Select a category</option>
+                  {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                  ))}
+              </select>
           </div>
 
           <div>

@@ -5,10 +5,10 @@ import api from './api';
 // Interface for the rating data coming from the backend
 export interface BackendRating {
   _id: string;
-  recipe: string; // The ID of the recipe this rating belongs to
-  user?: { // Make 'owner' property optional
-    _id?: string; // Make '_id' optional within owner
-    username?: string; // Make 'username' optional within owner
+  recipe: string; 
+  user?: { 
+    _id?: string; 
+    username?: string; 
   };
   rating: number;
   comment: string;

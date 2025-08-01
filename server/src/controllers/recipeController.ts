@@ -1,25 +1,16 @@
-// server/src/controllers/recipeController.ts
 import { Request, Response } from 'express';
-import Recipe, { IRecipe } from '../models/Recipe'; // Import IRecipe if not already
-import { Types } from 'mongoose'; // For ObjectId validation
-import { IUser } from '../models/User'; // Import IUser
+import Recipe, { IRecipe } from '../models/Recipe';
+import { Types } from 'mongoose';
+import { IUser } from '../models/User';
 
-// @desc    Create a new recipe
-// @route   POST /api/recipes
-// @access  Private
 export const createRecipe = async (req: Request, res: Response) => {
-  console.log("--- DEBUG: createRecipe controller entered ---");
-
   if (!req.user) {
-    console.error("ERROR: req.user is undefined in createRecipe. Protect middleware likely failed or was skipped.");
     return res.status(401).json({ message: res.__('not_authorized_user_not_found') });
   }
 
-  console.log("DEBUG: req.user._id in createRecipe:", req.user._id);
+  const { name, description, ingredients, instructions, cookingTime, servings, image, category } = req.body;
 
-  const { name, description, ingredients, instructions, cookingTime, servings, image } = req.body;
-
-  if (!name || !description || !ingredients || !instructions || !cookingTime || !servings) {
+  if (!name || !description || !ingredients || !instructions || !cookingTime || !servings || !category) {
     return res.status(400).json({ message: res.__('please_include_all_required_recipe_fields') });
   }
 
@@ -32,7 +23,7 @@ export const createRecipe = async (req: Request, res: Response) => {
 
   try {
     const recipe = await Recipe.create({
-      owner: new Types.ObjectId(req.user._id), // Mongoose will handle this as ObjectId automatically
+      owner: new Types.ObjectId(req.user._id),
       name,
       description,
       ingredients,
@@ -40,6 +31,7 @@ export const createRecipe = async (req: Request, res: Response) => {
       cookingTime,
       servings,
       image,
+      category,
     });
 
     res.status(201).json({
@@ -54,19 +46,26 @@ export const createRecipe = async (req: Request, res: Response) => {
     if (error.code === 11000) {
       const field = Object.keys(error.keyValue)[0];
       const value = error.keyValue[field];
-      return res.status(400).json({ message: res.__('duplicate_field_error', field, value) }); // Using a more generic key
+      return res.status(400).json({ message: res.__('duplicate_field_error', field, value) });
     }
-    console.error(error);
     res.status(500).json({ message: res.__('server_error_recipe_creation') });
   }
 };
 
-// @desc    Get all recipes
-// @route   GET /api/recipes
-// @access  Public
 export const getAllRecipes = async (req: Request, res: Response) => {
   try {
-    const recipes = await Recipe.find({})
+    const { category, search } = req.query;
+    let filter: any = {};
+
+    if (category && typeof category === 'string') {
+      filter.category = category;
+    }
+
+    if (search && typeof search === 'string') {
+      filter.name = { $regex: search, $options: 'i' };
+    }
+
+    const recipes = await Recipe.find(filter)
       .populate('owner', 'username')
       .sort({ createdAt: -1 });
 
@@ -76,14 +75,10 @@ export const getAllRecipes = async (req: Request, res: Response) => {
       recipes,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: res.__('server_error_fetching_recipes') });
   }
 };
 
-// @desc    Get single recipe by ID
-// @route   GET /api/recipes/:id
-// @access  Public
 export const getRecipeById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -93,12 +88,12 @@ export const getRecipeById = async (req: Request, res: Response) => {
 
   try {
     const recipe = await Recipe.findById(id)
-      .populate('owner', ['username', 'email']) 
-      .populate({ 
-        path: 'ratings', 
+      .populate('owner', ['username', 'email'])
+      .populate({
+        path: 'ratings',
         populate: {
-          path: 'user', // Populate the 'user' field *within* each rating
-          select: 'username', // Select only the username from the User model
+          path: 'user',
+          select: 'username',
         }
       });
     if (!recipe) {
@@ -110,42 +105,33 @@ export const getRecipeById = async (req: Request, res: Response) => {
       recipe,
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: res.__('server_error_fetching_recipe') });
   }
 };
 
-// @desc    Update a recipe
-// @route   PUT /api/recipes/:id
-// @access  Private (Owner only)
 export const updateRecipe = async (req: Request, res: Response) => {
   if (!req.user) {
     return res.status(401).json({ message: res.__('not_authorized_user_not_found') });
   }
 
   const { id } = req.params;
-  const { name, description, ingredients, instructions, cookingTime, servings, image } = req.body;
+  const { name, description, ingredients, instructions, cookingTime, servings, image, category } = req.body;
 
   if (!Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: res.__('invalid_recipe_id_format') });
   }
 
   try {
-    // Select the 'user' field explicitly without populating, so it's guaranteed to be an ObjectId
     let recipe = await Recipe.findById(id).select('+user');
 
     if (!recipe) {
       return res.status(404).json({ message: res.__('recipe_not_found') });
     }
 
-    // Now, recipe.user should be a Mongoose ObjectId directly,
-    // so we can use .equals() for comparison which is type-safe.
-    // Ensure both are treated as ObjectId types for comparison
     if (!(recipe.owner as Types.ObjectId).equals(req.user._id as Types.ObjectId)) {
       return res.status(403).json({ message: res.__('not_authorized_update_recipe') });
     }
 
-    // Update fields only if provided in the request body
     if (name) recipe.name = name;
     if (description) recipe.description = description;
     if (ingredients) {
@@ -163,6 +149,7 @@ export const updateRecipe = async (req: Request, res: Response) => {
     if (cookingTime) recipe.cookingTime = cookingTime;
     if (servings) recipe.servings = servings;
     if (image) recipe.image = image;
+    if (category) recipe.category = category;
 
     await recipe.save({ validateBeforeSave: true });
 
@@ -175,14 +162,10 @@ export const updateRecipe = async (req: Request, res: Response) => {
       const messages = Object.values(error.errors).map((val: any) => val.message);
       return res.status(400).json({ message: res.__('validation_error_prefix') + messages.join(', ') });
     }
-    console.error(error);
     res.status(500).json({ message: res.__('server_error_recipe_update') });
   }
 };
 
-// @desc    Delete a recipe
-// @route   DELETE /api/recipes/:id
-// @access  Private (Owner only)
 export const deleteRecipe = async (req: Request, res: Response) => {
   if (!req.user) {
     return res.status(401).json({ message: res.__('not_authorized_user_not_found') });
@@ -195,14 +178,12 @@ export const deleteRecipe = async (req: Request, res: Response) => {
   }
 
   try {
-    // Select the 'user' field explicitly without populating
     const recipe = await Recipe.findById(id).select('+user');
 
     if (!recipe) {
       return res.status(404).json({ message: res.__('recipe_not_found') });
     }
 
-    // Check if the logged-in user is the owner of this recipe
     if (!(recipe.owner as Types.ObjectId).equals(req.user._id as Types.ObjectId)) {
       return res.status(403).json({ message: res.__('not_authorized_delete_recipe') });
     }
@@ -211,7 +192,6 @@ export const deleteRecipe = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: res.__('recipe_deleted_successfully') });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: res.__('server_error_recipe_deletion') });
   }
 };
