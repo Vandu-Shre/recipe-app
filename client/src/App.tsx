@@ -9,7 +9,9 @@ import Navbar from './components/Navbar';
 import PrivateRoute from './components/PrivateRoute';
 import AddRecipePage from './pages/AddRecipePage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
-import EditRecipePage from './pages/EditRecipePage'; 
+import EditRecipePage from './pages/EditRecipePage';
+import MealPlannerPage from './pages/MealPlannerPage'; 
+import PantrySearchPage from './pages/PantrySearchPage'; 
 
 import { AuthProvider } from './context/AuthContext';
 
@@ -28,7 +30,9 @@ function App() {
             <Route element={<PrivateRoute />}>
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/add-recipe" element={<AddRecipePage />} />
-              <Route path="/edit-recipe/:id" element={<EditRecipePage />} /> {/* <--- NEW ROUTE */}
+              <Route path="/edit-recipe/:id" element={<EditRecipePage />} />
+              <Route path="/meal-planner" element={<MealPlannerPage />} /> 
+              <Route path="/pantry-search" element={<PantrySearchPage />} /> 
             </Route>
 
             <Route path="*" element={<h1 className="text-center mt-20 text-4xl">404 - Not Found</h1>} />

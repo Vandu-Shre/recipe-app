@@ -19,7 +19,7 @@ export interface IBackendRecipe {
 }
 
 export interface IFrontendRecipe {
-  id: string;
+  _id: string;
   image: string;
   title: string;
   author: string;

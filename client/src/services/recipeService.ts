@@ -3,7 +3,7 @@ import api from './api';
 import type { IBackendRecipe, IFrontendRecipe, ICreateRecipeData, IUpdateRecipeData } from '../interfaces/recipe';
 
 const mapBackendRecipeToFrontend = (backendRecipe: IBackendRecipe): IFrontendRecipe => ({
-  id: backendRecipe._id,
+  _id: backendRecipe._id,
   image: backendRecipe.image,
   title: backendRecipe.name,
   author: backendRecipe.owner?.username || 'Unknown Author',
@@ -38,6 +38,24 @@ export const getRecipes = async (category?: string, searchTerm?: string, authorI
       throw new Error(error.response?.data?.message || 'Failed to fetch recipes');
     } else {
       throw new Error('An unexpected error occurred while fetching recipes');
+    }
+  }
+};
+
+export const getRecipesByUser = async (userId: string, authToken: string): Promise<IFrontendRecipe[]> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    };
+    const response = await api.get<{ message: string; count: number; recipes: IBackendRecipe[] }>(`/api/recipes?authorId=${userId}`, config);
+    return response.data.recipes.map(mapBackendRecipeToFrontend);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch user recipes');
+    } else {
+      throw new Error('An unexpected error occurred while fetching user recipes');
     }
   }
 };
@@ -114,12 +132,32 @@ export const deleteRecipe = async (recipeId: string, token: string): Promise<voi
   }
 };
 
+// New: Function to search for recipes by ingredients
+export const searchRecipesByIngredients = async (ingredients: string[]): Promise<IFrontendRecipe[]> => {
+  try {
+    const params = new URLSearchParams();
+    if (ingredients.length > 0) {
+      params.append('ingredients', ingredients.join(','));
+    }
+    const response = await api.get<{ message: string; count: number; recipes: IBackendRecipe[] }>('/api/recipes/search', { params });
+    return response.data.recipes.map(mapBackendRecipeToFrontend);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to search for recipes by ingredients.');
+    } else {
+      throw new Error('An unexpected error occurred while searching recipes.');
+    }
+  }
+};
+
 const recipeService = {
   getRecipes,
+  getRecipesByUser,
   getRecipeById,
   createRecipe,
   updateRecipe,
   deleteRecipe,
+  searchRecipesByIngredients,
 };
 
 export default recipeService;
