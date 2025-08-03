@@ -121,22 +121,23 @@ const RecipeListPage: React.FC = () => {
     <div className="container font-[Poppins] mx-auto mb-10 px-4 py-2 min-h-screen">
       <div className="w-full max-w-7xl mx-auto px-4">
         <div className="flex flex-wrap justify-center gap-x-8 gap-y-6">
-          {categories.map((category) => (
-            <div key={category.name} className="flex flex-col items-center">
-              <button
-                onClick={() => setSelectedCategory(category.name)}
-                className={`group transform transition-transform duration-200 focus:outline-none ${selectedCategory === category.name ? 'scale-110 ring-4 ring-orange-500 rounded-full' : 'hover:scale-105'}`}
-              >
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-lg">
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                  />
-                </div>
-              </button>
-              <p className="mt-3 text-sm md:text-base font-semibold text-gray-700 text-center">{category.name}</p>
-            </div>
-          ))}
+{categories.map((category) => (
+  <div key={category.name} className="flex flex-col items-center">
+    <button
+      onClick={() => setSelectedCategory(category.name)}
+      className={`group transform transition-transform duration-200 focus:outline-none ${selectedCategory === category.name ? 'scale-110 ring-4 ring-orange-500 rounded-full' : 'hover:scale-105'}`}
+    >
+      <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-lg">
+        <img
+          src={category.image}
+          alt={category.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+    </button>
+    <p className="mt-3 text-sm md:text-base font-semibold text-gray-700 text-center">{category.name}</p>
+  </div>
+))}
         </div>
       </div>
 

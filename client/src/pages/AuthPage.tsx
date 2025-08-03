@@ -24,7 +24,7 @@ const AuthPage: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/recipes');
+      navigate('/');
     }
   }, [user, navigate]);
 

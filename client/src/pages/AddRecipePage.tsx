@@ -57,7 +57,7 @@ const AddRecipePage: React.FC = () => {
   return (
     <div className="w-full p-10 min-h-screen font-[Poppins] bg-neutral-50">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-8">Add New Recipe</h1>
+        <h1 className="text-3xl md:text-4xl font-semibold text-gray-800 text-center mb-8">Add New Recipe</h1>
         <RecipeForm
           onSubmit={handleSubmit}
           loading={loading}

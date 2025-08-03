@@ -3,7 +3,7 @@ import api from './api';
 import type { IBackendRecipe, IFrontendRecipe, ICreateRecipeData, IUpdateRecipeData } from '../interfaces/recipe';
 
 const mapBackendRecipeToFrontend = (backendRecipe: IBackendRecipe): IFrontendRecipe => ({
-  _id: backendRecipe._id,
+  id: backendRecipe._id,
   image: backendRecipe.image,
   title: backendRecipe.name,
   author: backendRecipe.owner?.username || 'Unknown Author',
@@ -132,7 +132,6 @@ export const deleteRecipe = async (recipeId: string, token: string): Promise<voi
   }
 };
 
-// New: Function to search for recipes by ingredients
 export const searchRecipesByIngredients = async (ingredients: string[]): Promise<IFrontendRecipe[]> => {
   try {
     const params = new URLSearchParams();
@@ -150,6 +149,19 @@ export const searchRecipesByIngredients = async (ingredients: string[]): Promise
   }
 };
 
+export const getFeaturedRecipes = async (): Promise<IFrontendRecipe[]> => {
+  try {
+    const response = await api.get<{ message: string; count: number; recipes: IBackendRecipe[] }>('/api/recipes?featured=true');
+    return response.data.recipes.map(mapBackendRecipeToFrontend);
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || 'Failed to fetch featured recipes.');
+    } else {
+      throw new Error('An unexpected error occurred.');
+    }
+  }
+};
+
 const recipeService = {
   getRecipes,
   getRecipesByUser,
@@ -158,6 +170,7 @@ const recipeService = {
   updateRecipe,
   deleteRecipe,
   searchRecipesByIngredients,
+  getFeaturedRecipes
 };
 
 export default recipeService;

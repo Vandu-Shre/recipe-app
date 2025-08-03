@@ -54,7 +54,7 @@ export const createRecipe = async (req: Request, res: Response) => {
 
 export const getAllRecipes = async (req: Request, res: Response) => {
   try {
-    const { category, search } = req.query;
+    const { category, search, featured } = req.query;
     let filter: any = {};
 
     if (category && typeof category === 'string') {
@@ -63,6 +63,11 @@ export const getAllRecipes = async (req: Request, res: Response) => {
 
     if (search && typeof search === 'string') {
       filter.name = { $regex: search, $options: 'i' };
+    }
+
+    // New logic to filter by featured status
+    if (featured && featured === 'true') {
+      filter.isFeatured = true;
     }
 
     const recipes = await Recipe.find(filter)
@@ -76,6 +81,30 @@ export const getAllRecipes = async (req: Request, res: Response) => {
     });
   } catch (error) {
     res.status(500).json({ message: res.__('server_error_fetching_recipes') });
+  }
+};
+
+export const searchRecipesByIngredients = async (req: Request, res: Response) => {
+  const { ingredients } = req.query;
+
+  if (!ingredients || typeof ingredients !== 'string') {
+    return res.status(400).json({ message: 'Invalid ingredients parameter. Must be a comma-separated string.' });
+  }
+
+  const ingredientList = ingredients.split(',').map(item => new RegExp(item.trim(), 'i'));
+
+  try {
+    const recipes = await Recipe.find({
+      ingredients: { $in: ingredientList }
+    });
+
+    res.status(200).json({
+      message: 'Recipes fetched successfully based on ingredients',
+      count: recipes.length,
+      recipes,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error while searching for recipes.' });
   }
 };
 

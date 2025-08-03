@@ -1,11 +1,7 @@
-// client/src/pages/PantrySearchPage.tsx
-
 import React, { useState } from 'react';
 import Spinner from '../components/Spinner';
 import type { IFrontendRecipe } from '../interfaces/recipe';
-
-// We'll create this mock service to simulate API calls
-import recipeService from '../services/recipeService'; 
+import recipeService from '../services/recipeService';
 
 const PantrySearchPage: React.FC = () => {
   const [pantryIngredients, setPantryIngredients] = useState<string[]>([]);
@@ -37,7 +33,6 @@ const PantrySearchPage: React.FC = () => {
     setError(null);
 
     try {
-      // Simulating an API call to find recipes with the given ingredients
       const results = await recipeService.searchRecipesByIngredients(pantryIngredients);
       setSearchResults(results);
     } catch (err) {
@@ -51,12 +46,13 @@ const PantrySearchPage: React.FC = () => {
   return (
     <div className="min-h-screen px-4 py-8 font-[Poppins] bg-neutral-50 text-gray-800">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Pantry Search</h1>
+        <h1 className="text-4xl font-semibold text-center mb-8">Pantry Search</h1>
+        <p className="text-center text-lg font-medium text-gray-600 mb-8">
+          Look for recipes with what you have.
+        </p>
 
         <div className="bg-white p-6 rounded-lg shadow-xl mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Your Pantry</h2>
-          
-          <form onSubmit={handleAddIngredient} className="flex mb-4 gap-2">
+          <form onSubmit={handleAddIngredient} className="flex mt-10 mb-10 gap-2">
             <input
               type="text"
               placeholder="Add an ingredient (e.g., 'chicken')"
@@ -66,7 +62,7 @@ const PantrySearchPage: React.FC = () => {
             />
             <button
               type="submit"
-              className="py-2 px-6 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition duration-300"
+              className="py-2 px-6 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md transition duration-300 font-semibold"
             >
               Add
             </button>
@@ -90,17 +86,19 @@ const PantrySearchPage: React.FC = () => {
             </div>
           )}
 
-          <button
-            onClick={handleSearch}
-            disabled={isLoading}
-            className={`w-full py-3 mt-4 text-xl font-bold rounded-lg transition duration-300 ${
-              isLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-green-500 hover:bg-green-600 text-white'
-            }`}
-          >
-            {isLoading ? 'Searching...' : 'Find Recipes'}
-          </button>
+          <div className="text-center mt-4">
+            <button
+              onClick={handleSearch}
+              disabled={isLoading}
+              className={`py-2 px-12 font-semibold rounded-lg transition duration-300 ${
+                isLoading
+                  ? 'bg-gray-400 cursor-not-allowed text-white'
+                  : 'bg-orange-500 hover:bg-orange-600 text-white'
+              }`}
+            >
+              {isLoading ? 'Searching...' : 'Find Recipes'}
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-red-600 text-center my-4">{error}</p>}
@@ -111,7 +109,7 @@ const PantrySearchPage: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4">Search Results</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {searchResults.map(recipe => (
-                <div key={recipe._id} className="bg-gray-100 rounded-lg shadow-sm overflow-hidden transition-transform duration-200 hover:scale-[1.02]">
+                <div key={recipe.id} className="bg-neutral-50 rounded-lg shadow-sm overflow-hidden transition-transform duration-200 hover:scale-[1.02]">
                   {recipe.image ? (
                     <img src={recipe.image} alt={recipe.title} className="w-full h-48 object-cover" />
                   ) : (

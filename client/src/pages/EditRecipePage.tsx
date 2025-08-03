@@ -71,7 +71,8 @@ const EditRecipePage: React.FC = () => {
   return (
     <div className="w-full p-10 min-h-screen font-[Poppins] bg-neutral-50">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-8">Edit Recipe | {recipe.name}</h1>
+        <h1 className="text-3xl md:text-4xl font-semibold text-gray-800 text-center mb-8">Edit Recipe</h1>
+        <h2 className="text-xl md:text-2xl font-bold text-orange-500 text-center mb-8">{recipe.name}</h2>
         <RecipeForm
           initialData={recipe}
           onSubmit={handleSubmit}
