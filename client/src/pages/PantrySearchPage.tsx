@@ -9,6 +9,7 @@ const PantrySearchPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<IFrontendRecipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false); // <-- New state variable
 
   const handleAddIngredient = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,11 +27,14 @@ const PantrySearchPage: React.FC = () => {
   const handleSearch = async () => {
     if (pantryIngredients.length === 0) {
       setError("Please add at least one ingredient to your pantry.");
+      setSearchResults([]); // Clear old results
+      setHasSearched(false); // Make sure this is false if no search happens
       return;
     }
 
     setIsLoading(true);
     setError(null);
+    setHasSearched(true); // <-- Set to true when the search begins
 
     try {
       const results = await recipeService.searchRecipesByIngredients(pantryIngredients);
@@ -131,7 +135,7 @@ const PantrySearchPage: React.FC = () => {
           </div>
         )}
 
-        {searchResults.length === 0 && !isLoading && !error && pantryIngredients.length > 0 && (
+        {searchResults.length === 0 && !isLoading && !error && hasSearched && (
           <div className="bg-white p-6 rounded-lg shadow-xl text-center">
             <p className="text-lg text-gray-600">No recipes found matching your pantry ingredients.</p>
           </div>

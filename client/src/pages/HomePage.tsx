@@ -109,7 +109,7 @@ const HomePage: React.FC = () => {
           className="w-full h-[30rem] md:h-[55rem] object-cover"
         />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <p className="font-bold text-gray-600 text-2xl md:text-4xl font-[Poppins] drop-shadow-md p-4 mb-8 leading-relaxed tracking-wide">
+          <p className="font-bold text-gray-600 text-2xl md:text-4xl font-[Poppins] drop-shadow-md p-4 mt-24 lg:mb-32 leading-relaxed tracking-wide">
             Your ultimate guide to recipes,<br /> meal planning, and culinary inspiration.
           </p>
           <Link to="/recipes">

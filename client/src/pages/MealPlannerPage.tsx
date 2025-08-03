@@ -6,6 +6,7 @@ import recipeService from '../services/recipeService';
 import { getMealPlanForWeek, saveMealPlan } from '../services/mealPlannerService';
 import type { IFrontendRecipe } from '../interfaces/recipe';
 import type { MealPlan } from '../services/mealPlannerService';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const meals = ['Breakfast', 'Lunch', 'Dinner'];
@@ -33,6 +34,7 @@ const MealPlannerPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [mobileDayIndex, setMobileDayIndex] = useState(new Date().getDay());
 
   const currentDayIndex = new Date().getDay();
 
@@ -142,7 +144,9 @@ const MealPlannerPage: React.FC = () => {
   };
 
   const weekDates = getWeekDates();
-  
+  const mobileCurrentDay = weekDates[mobileDayIndex];
+  const mobileDateKey = mobileCurrentDay.toISOString().split('T')[0];
+
   if (authLoading || isLoading) {
     return <Spinner />;
   }
@@ -164,7 +168,7 @@ const MealPlannerPage: React.FC = () => {
   return (
     <div className="min-h-screen px-4 py-8 font-[Poppins] bg-neutral-50 text-gray-800">
       <div className="mx-auto xl:px-8">
-        <h1 className="text-4xl font-semibold text-center mb-8">Weekly Meal Planner</h1>
+        <h1 className="text-4xl font-semibold text-center mb-8">Meal Planner</h1>
         
         {!isEditing && (
           <p className="text-center text-md font-medium text-gray-600 mb-6">
@@ -176,8 +180,8 @@ const MealPlannerPage: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="lg:w-3/4">
-             {/* Week navigation and control buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+             {/* Week navigation and control buttons - Desktop View */}
+            <div className="hidden lg:flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => {
@@ -185,11 +189,9 @@ const MealPlannerPage: React.FC = () => {
                     previousWeek.setDate(previousWeek.getDate() - 7);
                     setCurrentDate(previousWeek);
                   }}
-                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-100 transition duration-200"
+                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 stroke-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
+                  <ChevronLeftIcon className="h-6 w-6 stroke-orange-600" />
                 </button>
                 <div className="text-xl font-semibold">
                   {formattedDate(weekDates[0])} - {formattedDate(weekDates[6])}
@@ -200,16 +202,15 @@ const MealPlannerPage: React.FC = () => {
                     nextWeek.setDate(nextWeek.getDate() + 7);
                     setCurrentDate(nextWeek);
                   }}
-                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-100 transition duration-200"
+                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 stroke-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
+                  <ChevronRightIcon className="h-6 w-6 stroke-orange-600" />
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-2 text-center w-full">
+            {/* Weekly Grid - Desktop View */}
+            <div className="hidden lg:grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-2 text-center w-full">
               <div className="p-4 bg-gray-100 rounded-lg font-semibold flex flex-col justify-center items-center h-20">Meal</div>
               
               {days.map((day, index) => (
@@ -275,6 +276,81 @@ const MealPlannerPage: React.FC = () => {
                   })}
                 </React.Fragment>
               ))}
+            </div>
+
+            {/* Mobile View - Single Day */}
+            <div className="lg:hidden">
+              <div className="flex items-center justify-center space-x-4 mb-6">
+                <button
+                  onClick={() => setMobileDayIndex(Math.max(0, mobileDayIndex - 1))}
+                  disabled={mobileDayIndex === 0}
+                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeftIcon className="h-6 w-6 stroke-orange-600" />
+                </button>
+                <div className="text-xl font-semibold text-center">
+                  <div>{days[mobileDayIndex]}</div>
+                  <div className="text-sm text-gray-500">{formattedDate(weekDates[mobileDayIndex])}</div>
+                </div>
+                <button
+                  onClick={() => setMobileDayIndex(Math.min(6, mobileDayIndex + 1))}
+                  disabled={mobileDayIndex === 6}
+                  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRightIcon className="h-6 w-6 stroke-orange-600" />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {meals.map(meal => {
+                  const entry = mealPlan[mobileDateKey]?.[meal];
+                  const mealSlotClasses = `p-4 rounded-lg flex flex-col items-center justify-center transition duration-200 ${
+                    entry ? 'border-2 border-solid border-orange-500' : 'border-2 border-dashed border-gray-300'
+                  } ${isEditing ? 'cursor-pointer' : ''} ${mobileDayIndex === currentDayIndex ? 'bg-orange-100' : 'bg-white'}`;
+                  
+                  return (
+                    <div
+                      key={`${mobileDateKey}-${meal}`}
+                      className={mealSlotClasses}
+                      onClick={() => {
+                        if (isEditing && selectedRecipeId) {
+                          const recipeToAdd = recipes.find(r => r.id === selectedRecipeId);
+                          if (recipeToAdd) {
+                            addRecipeToPlan(recipeToAdd, mobileDateKey, meal);
+                          }
+                        }
+                      }}
+                    >
+                      <div className="font-semibold text-center text-lg mb-2">{meal}</div>
+                      {entry ? (
+                        <div className="flex flex-col items-center justify-center w-full">
+                          <span className="text-gray-700 font-medium text-sm text-center line-clamp-3">
+                            {entry.recipeTitle}
+                          </span>
+                          {isEditing && (
+                            <button
+                              onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeRecipeFromPlan(mobileDateKey, meal);
+                                  setSelectedRecipeId(null);
+                              }}
+                              className="mt-2 text-xs text-red-500 hover:text-red-700 transition duration-200"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      ) : isEditing ? (
+                        <span className="text-gray-400 text-sm">
+                          {selectedRecipeId ? 'Click to add' : 'Select a recipe'}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-sm">No recipe added</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 

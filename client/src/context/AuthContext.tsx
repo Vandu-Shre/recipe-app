@@ -1,4 +1,7 @@
+// src/context/AuthContext.tsx
+
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:5000';
@@ -28,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate(); // <-- Add this line
 
   useEffect(() => {
     const initializeAuth = () => {
@@ -68,6 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthToken(token);
     setUser(mappedUser);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    navigate('/'); // <-- Add this for a smooth login/register flow
   };
 
   const login = async (email: string, password: string) => {
@@ -96,6 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAuthToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
+    navigate('/auth'); // <-- The crucial addition to redirect the user
   };
 
   const value = {

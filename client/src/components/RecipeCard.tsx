@@ -15,7 +15,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ image, title, author, rating, t
   console.log(title, author)
   return (
     <div className="rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer relative w-full">
-      <img src={image} alt={title} className="w-full h-100 object-cover" />
+      <img src={image} alt={title} className="w-120 h-100 object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       
       <div className="absolute bottom-0 p-4 w-full text-white flex flex-col justify-end">
