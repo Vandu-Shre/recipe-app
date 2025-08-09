@@ -6,7 +6,7 @@ on:
       - aws-deployment  # or your deployment branch
     paths:
       - 'client/**'
-      - '.github/workflows/deploy-client.yml'
+      - '.github/workflows/deploy-client.yaml'
 
 jobs:
   deploy:
